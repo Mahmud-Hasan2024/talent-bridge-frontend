@@ -1,0 +1,113 @@
+import {
+  FiBarChart2,
+  FiBriefcase,
+  FiPlusCircle,
+  FiTag,
+  FiUsers,
+} from "react-icons/fi";
+import { GiSuitcase } from "react-icons/gi";
+import { Link, useLocation } from "react-router";
+import useAuthContext from "../../hooks/useAuthContext";
+
+const Sidebar = () => {
+  const { user, logout } = useAuthContext();
+  const location = useLocation();
+  if (!user) return null;
+
+  const role = user.role?.toLowerCase() || "guest";
+
+  // 🎯 Menus for each role (matching your AppRoutes)
+  const seekerMenus = [
+    { to: "/dashboard", icon: FiBarChart2, label: "Dashboard" },
+    { to: "/jobs", icon: FiBriefcase, label: "Browse Jobs" },
+    { to: "/job-categories", icon: FiTag, label: "Categories" },
+    {
+      to: "/dashboard/seeker/my-applications",
+      icon: FiUsers,
+      label: "My Applications",
+    },
+  ];
+
+  const employerMenus = [
+    { to: "/dashboard", icon: FiBarChart2, label: "Dashboard" },
+    { to: "/dashboard/employer/post-job", icon: FiPlusCircle, label: "Post Job" },
+    { to: "/dashboard/employer/my-jobs", icon: FiBriefcase, label: "My Jobs" },
+    {
+      to: "/dashboard/employer/applicants",
+      icon: FiUsers,
+      label: "Applicants",
+    },
+  ];
+
+  const adminMenus = [
+    { to: "/dashboard", icon: FiBarChart2, label: "Dashboard" },
+    { to: "/dashboard/Adminjobs", icon: FiBriefcase, label: "Manage Jobs" },
+    { to: "/dashboard/Admincategories", icon: FiTag, label: "Manage Categories" },
+    { to: "/dashboard/Adminapplicants", icon: FiUsers, label: "All Applicants" },
+  ];
+
+  // ✅ Select correct menu based on role
+  let menuItems = seekerMenus;
+  if (role === "admin") menuItems = adminMenus;
+  else if (role === "employer") menuItems = employerMenus;
+
+  return (
+    <div className="drawer-side z-10">
+      <label
+        htmlFor="drawer-toggle"
+        aria-label="close sidebar"
+        className="drawer-overlay"
+      ></label>
+
+      <aside className="menu bg-base-200 w-64 min-h-full p-4 flex flex-col">
+        {/* 🔰 Logo */}
+        <div className="flex items-center gap-2 mb-6 px-2">
+          <Link
+            to="/"
+            className="flex items-center gap-2 btn btn-ghost text-xl"
+          >
+            <GiSuitcase size={30} className="text-green-400" />
+            <span className="font-bold">Talent Bridge</span>
+          </Link>
+        </div>
+
+        {/* 📋 Sidebar links */}
+        <ul className="menu menu-md gap-2 flex-1">
+          {menuItems.map((item, index) => {
+            const isActive = location.pathname === item.to;
+            return (
+              <li key={index}>
+                <Link
+                  to={item.to}
+                  className={`flex items-center ${
+                    isActive
+                      ? "bg-green-600 text-white rounded-md"
+                      : "hover:bg-base-300"
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Logout (optional for dashboard) */}
+        {/* <button
+          onClick={logout}
+          className="btn btn-sm btn-outline mt-2 text-sm"
+        >
+          Logout
+        </button> */}
+
+        {/* Footer */}
+        <div className="mt-6 pt-4 text-xs text-base-content/70 border-t border-base-300">
+          © 2025 Talent Bridge Co.
+        </div>
+      </aside>
+    </div>
+  );
+};
+
+export default Sidebar;
