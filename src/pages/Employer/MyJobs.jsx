@@ -102,7 +102,7 @@ const MyJobs = () => {
                 <p className="text-gray-500">
                     No jobs posted yet.{" "}
                     <Link
-                        to="/dashboard/post-job"
+                        to="/Dashboard/post-job"
                         className="text-green-600 hover:underline"
                     >
                         Post one now!

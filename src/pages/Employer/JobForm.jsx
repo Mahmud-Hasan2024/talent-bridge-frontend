@@ -98,7 +98,7 @@ const JobForm = ({ isEdit = false }) => {
         headers: { Authorization: `JWT ${authTokens?.access}` },
       });
 
-      navigate("/dashboard/employer/my-jobs");
+      navigate("/Dashboard/employer/my-jobs");
     } catch (err) {
       console.error("Error submitting job:", err.response?.data || err);
       // Display the structured error from the backend

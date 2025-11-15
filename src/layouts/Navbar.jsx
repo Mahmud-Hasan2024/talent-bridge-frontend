@@ -24,11 +24,11 @@ const navLinks = [
   { path: "/job-categories", label: "Categories" },
   
   ...(isAuthenticated 
-      ? [{ path: "/dashboard", label: "Dashboard" }] 
+      ? [{ path: "/Dashboard", label: "Dashboard" }] 
       : []),
       
   ...(role === "seeker"
-    ? [{ path: "/dashboard/seeker/my-applications", label: "My Applications" }]
+    ? [{ path: "/Dashboard/seeker/my-applications", label: "My Applications" }]
     : []),
     
   { path: "/about", label: "About" },

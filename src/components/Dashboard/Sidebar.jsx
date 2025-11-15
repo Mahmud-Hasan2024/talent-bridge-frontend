@@ -18,32 +18,32 @@ const Sidebar = () => {
 
   // 🎯 Menus for each role (matching your AppRoutes)
   const seekerMenus = [
-    { to: "/dashboard", icon: FiBarChart2, label: "Dashboard" },
+    { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
     { to: "/jobs", icon: FiBriefcase, label: "Browse Jobs" },
     { to: "/job-categories", icon: FiTag, label: "Categories" },
     {
-      to: "/dashboard/seeker/my-applications",
+      to: "/Dashboard/seeker/my-applications",
       icon: FiUsers,
       label: "My Applications",
     },
   ];
 
   const employerMenus = [
-    { to: "/dashboard", icon: FiBarChart2, label: "Dashboard" },
-    { to: "/dashboard/employer/post-job", icon: FiPlusCircle, label: "Post Job" },
-    { to: "/dashboard/employer/my-jobs", icon: FiBriefcase, label: "My Jobs" },
+    { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
+    { to: "/Dashboard/employer/post-job", icon: FiPlusCircle, label: "Post Job" },
+    { to: "/Dashboard/employer/my-jobs", icon: FiBriefcase, label: "My Jobs" },
     {
-      to: "/dashboard/employer/applicants",
+      to: "/Dashboard/employer/applicants",
       icon: FiUsers,
       label: "Applicants",
     },
   ];
 
   const adminMenus = [
-    { to: "/dashboard", icon: FiBarChart2, label: "Dashboard" },
-    { to: "/dashboard/Adminjobs", icon: FiBriefcase, label: "Manage Jobs" },
-    { to: "/dashboard/Admincategories", icon: FiTag, label: "Manage Categories" },
-    { to: "/dashboard/Adminapplicants", icon: FiUsers, label: "All Applicants" },
+    { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
+    { to: "/Dashboard/Adminjobs", icon: FiBriefcase, label: "Manage Jobs" },
+    { to: "/Dashboard/Admincategories", icon: FiTag, label: "Manage Categories" },
+    { to: "/Dashboard/Adminapplicants", icon: FiUsers, label: "All Applicants" },
   ];
 
   // ✅ Select correct menu based on role

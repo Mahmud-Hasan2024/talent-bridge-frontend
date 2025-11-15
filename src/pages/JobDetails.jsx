@@ -111,8 +111,8 @@ const JobDetails = () => {
   // Determine the correct dashboard path based on role
   const dashboardPath =
     user?.role === "admin"
-      ? "/dashboard/Adminjobs"
-      : `/dashboard/employer/jobs/${job.id}/edit`;
+      ? "/Dashboard/Adminjobs"
+      : `/Dashboard/employer/jobs/${job.id}/edit`;
 
   // --- RENDER ---
   return (

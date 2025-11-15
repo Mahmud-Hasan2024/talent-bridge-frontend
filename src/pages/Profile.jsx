@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
-import ProfileForm from "../components/dashboard/Profile/ProfileForm";
-import PasswordChangeForm from "../components/dashboard/Profile/PasswordChangeForm";
-import ProfileButtons from "../components/dashboard/Profile/ProfileButtons";
+import ProfileForm from "../components/Dashboard/Profile/ProfileForm";
+import PasswordChangeForm from "../components/Dashboard/Profile/PasswordChangeForm";
+import ProfileButtons from "../components/Dashboard/Profile/ProfileButtons";
 import ErroAlert from "../components/ErroAlert";
 import { UserCog } from "lucide-react";
 

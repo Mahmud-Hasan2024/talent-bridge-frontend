@@ -49,7 +49,7 @@ const ApplicationDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-xl mt-10">
-      <Link to="/dashboard/applicants" className="btn btn-ghost mb-6">
+      <Link to="/Dashboard/applicants" className="btn btn-ghost mb-6">
         <FaArrowLeft /> Back to Applicants
       </Link>
 

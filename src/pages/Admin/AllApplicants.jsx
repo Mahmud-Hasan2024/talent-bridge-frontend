@@ -103,7 +103,7 @@ const AllApplicants = () => {
                   </td>
                   <td>
                     <Link
-                      to={`/dashboard/applications/${app.id}`} 
+                      to={`/Dashboard/applications/${app.id}`} 
                       className="btn btn-sm btn-primary text-white bg-blue-600 hover:bg-blue-700"
                     >
                       View Details

@@ -88,7 +88,7 @@ const ManageJobs = () => {
         {/* Post New Job Link for Employer */}
         {user?.role === "employer" && (
           <Link
-            to="/dashboard/employer/post-job"
+            to="/Dashboard/employer/post-job"
             className="btn btn-success text-white"
           >
             Post New Job
@@ -124,7 +124,7 @@ const ManageJobs = () => {
                     {/* Edit button logic */}
                     {user?.role === "admin" || user?.id === job.employer ? (
                       <Link
-                        to={`/dashboard/${user.role}/jobs/${job.id}/edit`}
+                        to={`/Dashboard/${user.role}/jobs/${job.id}/edit`}
                         className="btn btn-sm btn-primary flex items-center gap-1"
                       >
                         <FiEdit /> Edit

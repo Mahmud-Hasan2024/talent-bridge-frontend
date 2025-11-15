@@ -204,7 +204,7 @@ const Applicants = () => {
                         View Job
                       </Link>
                       <Link
-                        to={`/dashboard/applications/${app.id}`} 
+                        to={`/Dashboard/applications/${app.id}`} 
                         className="btn btn-primary btn-xs text-white bg-green-600 hover:bg-green-700 w-full"
                       >
                         View Applicant

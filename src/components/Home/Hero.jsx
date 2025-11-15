@@ -80,7 +80,7 @@ const Hero = () => {
           <div className="space-x-4">
             {role === "employer" && (
               <Link
-                to="/dashboard/employer/post-job"
+                to="/Dashboard/employer/post-job"
                 className="px-6 py-2 rounded-lg font-semibold bg-white hover:bg-gray-100 text-emerald-700 transition"
               >
                 Post a Job
@@ -96,7 +96,7 @@ const Hero = () => {
             )}
             {role === "admin" && (
               <Link
-                to="/dashboard"
+                to="/Dashboard"
                 className="px-6 py-2 rounded-lg font-semibold bg-lime-400 hover:bg-lime-500 text-gray-900 transition"
               >
                 Go to Dashboard
