@@ -25,13 +25,13 @@ const CategoryItem = ({ category }) => {
       <h3 className="text-xl font-bold mb-2 text-gray-700 group-hover:text-white transition">
         {category.name}
       </h3>
-      <p className="text-sm text-gray-700 group-hover:text-white/90 mb-4 transition">
+      <p className="text-sm text-gray-700 group-hover:text-white/90 mb-4 transition line-clamp-2">
         {category.description}
       </p>
 
-      {/* Footer link */}
+      {/* Footer link - Updated to point to the Category Page with a Hash */}
       <Link
-        to={`/jobs?category=${category.id}`}
+        to={`/job-categories#category-${category.id}`}
         className="inline-flex items-center gap-2 font-semibold
                    text-emerald-600 hover:text-emerald-800 group-hover:text-white transition"
       >

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router"; // Important for catching the hash
 import JobList from "./JobList";
 import useFetchCategories from "../hooks/useFetchCategories";
 import apiClient from "../services/api-client";
@@ -7,12 +8,12 @@ const CategoryPage = () => {
   const categories = useFetchCategories();
   const [categoriesWithJobs, setCategoriesWithJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchJobsForCategories = async () => {
       try {
         setLoading(true);
-
         const data = await Promise.all(
           categories.map(async (cat) => {
             const jobsRes = await apiClient.get(
@@ -21,7 +22,6 @@ const CategoryPage = () => {
             return { ...cat, jobs: jobsRes.data.results };
           })
         );
-
         setCategoriesWithJobs(data);
       } catch (err) {
         console.error(err);
@@ -34,6 +34,20 @@ const CategoryPage = () => {
       fetchJobsForCategories();
     }
   }, [categories]);
+
+  // Handle auto-scroll logic
+  useEffect(() => {
+    if (!loading && location.hash) {
+      const id = location.hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        // Use a slight timeout to ensure the DOM has fully painted
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+  }, [loading, location.hash, categoriesWithJobs]);
 
   if (loading) {
     return (
@@ -50,7 +64,12 @@ const CategoryPage = () => {
       </h1>
 
       {categoriesWithJobs.map((category) => (
-        <div key={category.id} className="mb-16">
+        /* Added id and scroll-mt-24 to offset for sticky navbars */
+        <div 
+          key={category.id} 
+          id={`category-${category.id}`} 
+          className="mb-16 scroll-mt-24"
+        >
           {/* Category Header */}
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-emerald-700">
