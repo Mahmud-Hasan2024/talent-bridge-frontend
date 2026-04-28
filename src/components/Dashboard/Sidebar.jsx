@@ -118,7 +118,7 @@ const Sidebar = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 pt-4 text-xs text-base-content/70 border-t border-base-300 text-center">
+        <div className="pt-4 text-xs text-base-content/70 border-t border-base-300 text-center">
           © 2025 Talent Bridge Co.
         </div>
       </aside>
