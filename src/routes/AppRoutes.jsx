@@ -74,6 +74,22 @@ function AppRoutes() {
 
         {/* Seeker-only */}
         <Route
+            path="jobs"
+            element={
+              <RoleGuard allowedRoles={["seeker"]}>
+                <Job />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="job-categories"
+            element={
+              <RoleGuard allowedRoles={["seeker"]}>
+                <CategoryPage />
+              </RoleGuard>
+            }
+          />
+        <Route
           path="seeker/my-applications"
           element={
             <RoleGuard allowedRoles={["seeker"]}>
