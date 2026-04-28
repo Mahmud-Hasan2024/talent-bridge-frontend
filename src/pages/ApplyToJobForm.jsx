@@ -22,9 +22,25 @@ const ApplyToJobForm = ({ jobId, hasApplied, onApplySuccess }) => {
   }, [hasApplied]);
 
   // Hide form if the user is the employer/admin
-  if (user && (user.role === "employer" || user.role === "admin")) {
+  // 1. If user is NOT logged in
+  if (!user) {
     return (
-      <div className="text-gray-500 text-center">
+      <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg text-center mt-8">
+        <p className="text-amber-800 font-medium">
+          Only Job Seekers can apply for jobs.
+        </p>
+        <p className="text-amber-700 text-sm mt-1">
+          Please <Link to="/login" className="underline font-bold">Login</Link> or 
+          <Link to="/register" className="underline font-bold ml-1">Register</Link> an account.
+        </p>
+      </div>
+    );
+  }
+
+  // 2. If user is logged in but is an employer/admin
+  if (user.role === "employer" || user.role === "admin") {
+    return (
+      <div className="text-gray-500 text-center mt-8 border p-4 rounded-lg">
         Employer/Admin view. Application not allowed.
       </div>
     );

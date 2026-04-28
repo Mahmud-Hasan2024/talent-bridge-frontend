@@ -79,8 +79,28 @@ const ApplyToJobButton = ({ jobId, hasApplied, onApplySuccess }) => {
   }
 
   // Hide button if the user is the employer/admin
-  if (user && (user.role === 'employer' || user.role === 'admin')) {
-      return <div className="text-gray-500 text-center">Employer/Admin view. Application not allowed.</div>;
+  // 1. If user is NOT logged in
+  if (!user) {
+    return (
+      <div className="text-center p-3 border border-dashed border-emerald-300 rounded-lg">
+        <p className="text-xs text-gray-600 mb-2">Only Job Seekers can apply.</p>
+        <button 
+          onClick={() => navigate('/login')}
+          className="btn btn-sm btn-emerald-600 text-white w-full"
+        >
+          Login to Apply
+        </button>
+      </div>
+    );
+  }
+
+  // 2. If user is logged in but is an employer/admin
+  if (user.role === 'employer' || user.role === 'admin') {
+    return (
+      <div className="text-gray-500 text-center text-sm italic">
+        Employer/Admin view. Application not allowed.
+      </div>
+    );
   }
   
   return (
