@@ -12,45 +12,37 @@ const SeekerDashboard = ({ data }) => {
       
       {/* 🎯 Stats Cards wrapped in Links */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
-        {/* Add 'flex' to the Link and 'flex-1' or 'w-full' to the wrapper */}
         <Link 
           to="/dashboard/seeker/my-applications" 
-          className="flex transition transform hover:scale-105"
+          className="flex flex-col h-full transition transform hover:scale-105"
         >
-          <div className="w-full">
-            <StatCard icon={FiSend} title="Total Applications" value={applications_count} />
-          </div>
+          <StatCard icon={FiSend} title="Total Applications" value={applications_count} />
         </Link>
 
         <Link 
           to="/dashboard/seeker/my-applications" 
-          className="flex transition transform hover:scale-105"
+          className="flex flex-col h-full transition transform hover:scale-105"
         >
-          <div className="w-full">
-            <StatCard icon={FiCalendar} title="Interviews Scheduled" value={interviews} />
-          </div>
+          <StatCard icon={FiCalendar} title="Interviews Scheduled" value={interviews} />
         </Link>
 
         <Link 
           to="/dashboard/seeker/my-applications" 
-          className="flex transition transform hover:scale-105"
+          className="flex flex-col h-full transition transform hover:scale-105"
         >
-          <div className="w-full">
-            <StatCard icon={FiCheckCircle} title="Job Offers" value={offers} />
-          </div>
+          {/* 🎯 h-full and flex-col ensures the shadow and bottom border are fully visible */}
+          <StatCard icon={FiCheckCircle} title="Job Offers" value={offers} />
         </Link>
 
         <Link 
           to="/dashboard/jobs" 
-          className="flex transition transform hover:scale-105"
+          className="flex flex-col h-full transition transform hover:scale-105"
         >
-          <div className="w-full">
-            <StatCard 
-              icon={FiSearch} 
-              title="Recommended Jobs" 
-              value={recommended_jobs?.length || 0} 
-            />
-          </div>
+          <StatCard 
+            icon={FiSearch} 
+            title="Recommended Jobs" 
+            value={recommended_jobs?.length || 0} 
+          />
         </Link>
       </div>
 
