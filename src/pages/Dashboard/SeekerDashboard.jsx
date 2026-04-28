@@ -12,38 +12,28 @@ const SeekerDashboard = ({ data }) => {
       
       {/* 🎯 Stats Cards wrapped in Links */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
-        <Link 
-          to="/dashboard/seeker/my-applications" 
-          className="flex flex-col h-full transition transform hover:scale-105"
-        >
-          <StatCard icon={FiSend} title="Total Applications" value={applications_count} />
-        </Link>
-
-        <Link 
-          to="/dashboard/seeker/my-applications" 
-          className="flex flex-col h-full transition transform hover:scale-105"
-        >
-          <StatCard icon={FiCalendar} title="Interviews Scheduled" value={interviews} />
-        </Link>
-
-        <Link 
-          to="/dashboard/seeker/my-applications" 
-          className="flex flex-col h-full transition transform hover:scale-105"
-        >
-          {/* 🎯 h-full and flex-col ensures the shadow and bottom border are fully visible */}
-          <StatCard icon={FiCheckCircle} title="Job Offers" value={offers} />
-        </Link>
-
-        <Link 
-          to="/dashboard/jobs" 
-          className="flex flex-col h-full transition transform hover:scale-105"
-        >
-          <StatCard 
-            icon={FiSearch} 
-            title="Recommended Jobs" 
-            value={recommended_jobs?.length || 0} 
-          />
-        </Link>
+        {[
+          { to: "/dashboard/seeker/my-applications", icon: FiSend, title: "Total Applications", value: applications_count },
+          { to: "/dashboard/seeker/my-applications", icon: FiCalendar, title: "Interviews Scheduled", value: interviews },
+          { to: "/dashboard/seeker/my-applications", icon: FiCheckCircle, title: "Job Offers", value: offers },
+          { to: "/dashboard/jobs", icon: FiSearch, title: "Recommended Jobs", value: recommended_jobs?.length || 0 },
+        ].map((item, idx) => (
+          <Link
+            key={idx}
+            to={item.to}
+            className="flex flex-col items-start p-6 bg-white rounded-xl shadow-md border border-gray-100 transition transform hover:scale-105 hover:shadow-xl w-full h-full"
+          >
+            <div className="p-3 bg-green-100 rounded-lg text-green-700 mb-4">
+              <item.icon size={24} />
+            </div>
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+              {item.title}
+            </p>
+            <p className="text-3xl font-bold text-gray-800 mt-1">
+              {item.value}
+            </p>
+          </Link>
+        ))}
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
