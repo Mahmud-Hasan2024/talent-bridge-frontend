@@ -12,39 +12,45 @@ const SeekerDashboard = ({ data }) => {
       
       {/* 🎯 Stats Cards wrapped in Links */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
+        {/* Add 'flex' to the Link and 'flex-1' or 'w-full' to the wrapper */}
         <Link 
           to="/dashboard/seeker/my-applications" 
           className="flex transition transform hover:scale-105"
         >
-          <StatCard className="w-full" icon={FiSend} title="Total Applications" value={applications_count} />
+          <div className="w-full">
+            <StatCard icon={FiSend} title="Total Applications" value={applications_count} />
+          </div>
         </Link>
 
         <Link 
           to="/dashboard/seeker/my-applications" 
           className="flex transition transform hover:scale-105"
         >
-          <StatCard className="w-full" icon={FiCalendar} title="Interviews Scheduled" value={interviews} />
+          <div className="w-full">
+            <StatCard icon={FiCalendar} title="Interviews Scheduled" value={interviews} />
+          </div>
         </Link>
 
         <Link 
           to="/dashboard/seeker/my-applications" 
           className="flex transition transform hover:scale-105"
         >
-          {/* 🎯 Using 'flex' on the Link and ensuring the card is 'w-full' 
-              fixes the 'invisible' or 'smaller' design issue */}
-          <StatCard className="w-full" icon={FiCheckCircle} title="Job Offers" value={offers} />
+          <div className="w-full">
+            <StatCard icon={FiCheckCircle} title="Job Offers" value={offers} />
+          </div>
         </Link>
 
         <Link 
           to="/dashboard/jobs" 
           className="flex transition transform hover:scale-105"
         >
-          <StatCard 
-            className="w-full"
-            icon={FiSearch} 
-            title="Recommended Jobs" 
-            value={recommended_jobs?.length || 0} 
-          />
+          <div className="w-full">
+            <StatCard 
+              icon={FiSearch} 
+              title="Recommended Jobs" 
+              value={recommended_jobs?.length || 0} 
+            />
+          </div>
         </Link>
       </div>
 
