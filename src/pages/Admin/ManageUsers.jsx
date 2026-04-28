@@ -21,7 +21,7 @@ const ManageUsers = () => {
       setLoading(true);
       try {
         // Bypass pagination as you did with jobs/applications
-        const res = await authApiClient.get("/users/?no_pagination=true");
+        const res = await authApiClient.get("/auth/users/?no_pagination=true");
         // DRF usually returns data directly if no_pagination is handled, 
         // or inside .results if using standard pagination
         const data = res.data.results || res.data;
