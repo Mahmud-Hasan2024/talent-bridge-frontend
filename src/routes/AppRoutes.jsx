@@ -39,6 +39,7 @@ import JobForm from "../pages/Employer/JobForm";
 // Admin
 import ManageJobs from "../pages/Admin/ManageJobs";
 import CategoryManager from "../pages/Admin/CategoryManager";
+import ManageUsers from "../pages/Admin/ManageUsers";
 import AllApplicants from "../pages/Admin/AllApplicants";
 
 function AppRoutes() {
