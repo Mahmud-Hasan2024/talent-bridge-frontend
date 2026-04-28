@@ -150,7 +150,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="Adminjobs"
+          path="admin/jobs"
           element={
             <RoleGuard allowedRoles={["admin"]}>
               <ManageJobs />
@@ -158,7 +158,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="Admincategories"
+          path="admin/categories"
           element={
             <RoleGuard allowedRoles={["admin"]}>
               <CategoryManager />
@@ -166,7 +166,15 @@ function AppRoutes() {
           }
         />
         <Route
-          path="Adminapplicants"
+          path="admin/users"
+          element={
+            <RoleGuard allowedRoles={["admin"]}>
+              <ManageUsers />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="admin/applicants"
           element={
             <RoleGuard allowedRoles={["admin"]}>
               <AllApplicants />
