@@ -39,22 +39,33 @@ const SeekerDashboard = ({ data }) => {
           {recently_applied && recently_applied.length > 0 ? (
             <ul className="space-y-3">
               {recently_applied.map((app) => (
-                <li 
-                  key={app.id} 
-                  className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200 border border-transparent hover:border-green-300"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-lg font-medium text-green-700">Application ID: {app.id}</p>
-                      <p className="text-sm text-gray-600">Job ID: {app.job_id}</p>
-                      <p className="text-xs text-gray-500">
-                        Applied on: {format(new Date(app.applied_at), 'MMM d, yyyy')}
-                      </p>
+                <li key={app.id}>
+                  {/* 🎯 Wrap content in Link to make the entire box clickable */}
+                  <Link 
+                    to={`/jobs/${app.job_id}`} 
+                    className="block p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200 border border-transparent hover:border-green-300 cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-lg font-medium text-green-700">
+                          Application ID: {app.id}
+                        </p>
+                        <p className="text-sm text-gray-600">Job ID: {app.job_id}</p>
+                        <p className="text-xs text-gray-500">
+                          Applied on: {format(new Date(app.applied_at), 'MMM d, yyyy')}
+                        </p>
+                      </div>
+                      <span 
+                        className={`text-xs font-semibold px-2 py-1 rounded capitalize ${
+                          app.status === 'offered' 
+                            ? 'bg-yellow-100 text-yellow-700' 
+                            : 'bg-green-100 text-green-700'
+                        }`}
+                      >
+                        {app.status}
+                      </span>
                     </div>
-                    <span className={`text-xs font-semibold px-2 py-1 rounded capitalize ${app.status === 'offered' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-                      {app.status}
-                    </span>
-                  </div>
+                  </Link>
                 </li>
               ))}
             </ul>
