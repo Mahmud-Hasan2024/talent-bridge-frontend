@@ -101,6 +101,21 @@ const Sidebar = () => {
           Logout
         </button> */}
 
+        {/* NEW: Return to Home Action */}
+        <div className="mt-auto border-t border-base-300 pt-4">
+          <ul className="p-0">
+            <li>
+              <Link 
+                to="/" 
+                className="flex items-center justify-center gap-3 py-3 px-4 rounded-lg text-emerald-600 border border-emerald-600 hover:bg-emerald-600 hover:text-white transition-all duration-200"
+              >
+                <FiHome className="h-5 w-5" />
+                <span className="font-bold">Return to Home</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+
         {/* Footer */}
         <div className="mt-6 pt-4 text-xs text-base-content/70 border-t border-base-300">
           © 2025 Talent Bridge Co.
