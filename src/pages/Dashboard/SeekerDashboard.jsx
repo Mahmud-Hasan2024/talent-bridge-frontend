@@ -12,16 +12,32 @@ const SeekerDashboard = ({ data }) => {
       
       {/* 🎯 Stats Cards wrapped in Links */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
-        <Link to="/dashboard/seeker/my-applications" className="transition transform hover:scale-105">
+        {/* Added 'block' to each Link to ensure they fill the grid column width */}
+        <Link 
+          to="/dashboard/seeker/my-applications" 
+          className="block transition transform hover:scale-105"
+        >
           <StatCard icon={FiSend} title="Total Applications" value={applications_count} />
         </Link>
-        <Link to="/dashboard/seeker/my-applications" className="transition transform hover:scale-105">
+
+        <Link 
+          to="/dashboard/seeker/my-applications" 
+          className="block transition transform hover:scale-105"
+        >
           <StatCard icon={FiCalendar} title="Interviews Scheduled" value={interviews} />
         </Link>
-        <Link to="/dashboard/seeker/my-applications" className="transition transform hover:scale-105">
+
+        <Link 
+          to="/dashboard/seeker/my-applications" 
+          className="block transition transform hover:scale-105"
+        >
           <StatCard icon={FiCheckCircle} title="Job Offers" value={offers} />
         </Link>
-        <Link to="/dashboard/jobs" className="transition transform hover:scale-105">
+
+        <Link 
+          to="/dashboard/jobs" 
+          className="block transition transform hover:scale-105"
+        >
           <StatCard 
             icon={FiSearch} 
             title="Recommended Jobs" 
