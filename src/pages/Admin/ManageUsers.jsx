@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import authApiClient from "../../services/auth-api-client";
 import useAuthContext from "../../hooks/useAuthContext";
-import { FiUser, FiMail, FiShield } from "react-icons/fi";
+import { FiMail } from "react-icons/fi";
 
 const ManageUsers = () => {
   const { authTokens, user } = useAuthContext();
@@ -10,7 +10,6 @@ const ManageUsers = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Security Check: Only admins should even attempt to fetch this
     if (!authTokens?.access || user?.role !== 'admin') {
       setError("Access denied. Admin privileges required.");
       setLoading(false);
@@ -20,16 +19,13 @@ const ManageUsers = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        // Bypass pagination as you did with jobs/applications
         const res = await authApiClient.get("/auth/users/?no_pagination=true");
-        // DRF usually returns data directly if no_pagination is handled, 
-        // or inside .results if using standard pagination
         const data = res.data.results || res.data;
         setUsers(data);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch users:", err);
-        setError("Failed to load users. Ensure your backend endpoint exists.");
+        setError("Failed to load users.");
       } finally {
         setLoading(false);
       }
@@ -51,42 +47,52 @@ const ManageUsers = () => {
         <table className="table table-zebra w-full">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Full Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
+              {/* 🎯 text-center added to headers */}
+              <th className="text-center">ID</th>
+              <th className="text-center">Full Name</th>
+              <th className="text-center">Email</th>
+              <th className="text-center">Role</th>
+              <th className="text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                <td>{u.id}</td>
-                <td className="font-medium">
-                  {u.first_name} {u.last_name}
+                {/* 🎯 text-center added to data cells */}
+                <td className="text-center">{u.id}</td>
+                <td className="font-medium text-center">
+                  {u.first_name || u.last_name 
+                    ? `${u.first_name || ''} ${u.last_name || ''}` 
+                    : u.username || "System User"}
                 </td>
-                <td>
-                  <div className="flex items-center gap-2">
+                <td className="text-center">
+                  {/* justify-center added to keep icon and text centered together */}
+                  <div className="flex items-center justify-center gap-2">
                     <FiMail className="text-gray-400" />
                     {u.email}
                   </div>
                 </td>
-                <td>
+                <td className="text-center">
                   <span className={`badge capitalize ${
                     u.role === 'admin' ? 'badge-secondary' : 
-                    u.role === 'employer' ? 'badge-primary' : 'badge-ghost'
+                    u.role === 'employer' ? 'badge-primary' : 
+                    u.role === 'seeker' ? 'badge-accent' : 'badge-ghost'
                   }`}>
                     {u.role || 'Guest'}
                   </span>
                 </td>
-                <td>
-                  {u.is_active ? (
-                    <span className="text-green-600 flex items-center gap-1">
-                      <div className="badge badge-success badge-xs"></div> Active
-                    </span>
-                  ) : (
-                    <span className="text-red-500">Inactive</span>
-                  )}
+                <td className="text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    {u.is_active ? (
+                      <span className="text-green-600 flex items-center gap-1">
+                        <div className="badge badge-success badge-xs"></div> Active
+                      </span>
+                    ) : (
+                      <span className="text-red-500 flex items-center gap-1">
+                        <div className="badge badge-error badge-xs"></div> Inactive
+                      </span>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
