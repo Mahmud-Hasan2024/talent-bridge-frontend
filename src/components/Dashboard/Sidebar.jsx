@@ -4,6 +4,7 @@ import {
   FiPlusCircle,
   FiTag,
   FiUsers,
+  FiHome,
 } from "react-icons/fi";
 import { GiSuitcase } from "react-icons/gi";
 import { Link, useLocation } from "react-router";
