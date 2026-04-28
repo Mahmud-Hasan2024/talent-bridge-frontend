@@ -3,6 +3,7 @@ import {
   FiBriefcase,
   FiPlusCircle,
   FiTag,
+  FiUser,
   FiUsers,
   FiHome,
 } from "react-icons/fi";
@@ -44,7 +45,7 @@ const Sidebar = () => {
     { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
     { to: "/Dashboard/admin/jobs", icon: FiBriefcase, label: "Manage Jobs" },
     { to: "/Dashboard/admin/categories", icon: FiTag, label: "Manage Categories" },
-    { to: "/Dashboard/admin/users", icon: FiUsers, label: "Manage Users" },
+    { to: "/Dashboard/admin/users", icon: FiUser, label: "Manage Users" },
     { to: "/Dashboard/admin/applicants", icon: FiUsers, label: "All Applicants" },
   ];
 
