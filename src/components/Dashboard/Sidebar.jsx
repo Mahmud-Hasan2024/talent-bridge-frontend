@@ -19,8 +19,8 @@ const Sidebar = () => {
   // 🎯 Menus for each role (matching your AppRoutes)
   const seekerMenus = [
     { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
-    { to: "/jobs", icon: FiBriefcase, label: "Browse Jobs" },
-    { to: "/job-categories", icon: FiTag, label: "Categories" },
+    { to: "/Dashboard/jobs", icon: FiBriefcase, label: "Browse Jobs" },
+    { to: "/Dashboard/job-categories", icon: FiTag, label: "Categories" },
     {
       to: "/Dashboard/seeker/my-applications",
       icon: FiUsers,
