@@ -82,7 +82,7 @@ const SeekerDashboard = ({ data }) => {
                     </div>
                     {/* View Details Button */}
                     <Link
-                      to={`/dashboard/jobs/${job.id}`} // Adjusted to match your new dashboard route
+                      to={`/jobs/${job.id}`} // Adjusted to match your new dashboard route
                       className="text-sm font-medium text-emerald-700 hover:text-emerald-900 transition flex items-center gap-1"
                     >
                       View Details →
