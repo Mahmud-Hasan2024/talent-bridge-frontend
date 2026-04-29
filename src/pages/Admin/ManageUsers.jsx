@@ -21,7 +21,11 @@ const ManageUsers = () => {
       try {
         const res = await authApiClient.get("/auth/users/?no_pagination=true");
         const data = res.data.results || res.data;
-        setUsers(data);
+
+        // 🎯 Sort by ID in ascending order (smallest to largest)
+        const sortedUsers = [...data].sort((a, b) => a.id - b.id);
+        
+        setUsers(sortedUsers);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch users:", err);
@@ -47,7 +51,6 @@ const ManageUsers = () => {
         <table className="table table-zebra w-full">
           <thead>
             <tr>
-              {/* 🎯 text-center added to headers */}
               <th className="text-center">ID</th>
               <th className="text-center">Full Name</th>
               <th className="text-center">Email</th>
@@ -58,7 +61,6 @@ const ManageUsers = () => {
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                {/* 🎯 text-center added to data cells */}
                 <td className="text-center">{u.id}</td>
                 <td className="font-medium text-center">
                   {u.first_name || u.last_name 
@@ -66,7 +68,6 @@ const ManageUsers = () => {
                     : u.username || "System User"}
                 </td>
                 <td className="text-center">
-                  {/* justify-center added to keep icon and text centered together */}
                   <div className="flex items-center justify-center gap-2">
                     <FiMail className="text-gray-400" />
                     {u.email}
@@ -84,11 +85,11 @@ const ManageUsers = () => {
                 <td className="text-center">
                   <div className="flex items-center justify-center gap-1">
                     {u.is_active ? (
-                      <span className="text-green-600 flex items-center gap-1">
+                      <span className="text-green-600 flex items-center gap-1 font-medium">
                         <div className="badge badge-success badge-xs"></div> Active
                       </span>
                     ) : (
-                      <span className="text-red-500 flex items-center gap-1">
+                      <span className="text-red-500 flex items-center gap-1 font-medium">
                         <div className="badge badge-error badge-xs"></div> Inactive
                       </span>
                     )}
