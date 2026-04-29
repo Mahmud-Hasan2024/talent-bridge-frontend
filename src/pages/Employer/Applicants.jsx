@@ -98,9 +98,13 @@ const Applicants = () => {
     return (
         <div className="p-6 max-w-6xl mx-auto">
             <header className="mb-8">
-                <h2 className="text-3xl font-black text-slate-800">Employer Dashboard</h2>
-                <p className="text-slate-500 font-medium">Manage applicants across your active job postings.</p>
-            </header>
+              <h2 className="text-3xl font-black text-slate-800">
+                  {Object.values(jobsData)[0]?.company || "Employer"}'s Job Applicants
+              </h2>
+              <p className="text-slate-500 font-medium">
+                  Manage applicants across your active job postings.
+              </p>
+          </header>
 
             <div className="space-y-4">
                 {Object.entries(jobsData).length === 0 ? (
