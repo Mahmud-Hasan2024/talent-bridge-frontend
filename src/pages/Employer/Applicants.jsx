@@ -43,7 +43,7 @@ const Applicants = () => {
 
                 if (!acc[jobId]) {
                     acc[jobId] = {
-                        // 💡 FIX: Ensure full metadata is captured here
+                        // 💡 FIX: Accessing 'company_name' to match your SimpleJobDetailSerializer
                         company: app.job?.company_name || "Employer", 
                         title: app.job?.title || "Untitled Position",
                         location: app.job?.location || "N/A",
@@ -78,7 +78,6 @@ const Applicants = () => {
                 status: newStatus,
             });
 
-            // 💡 Update logic: replaces the object with fresh data from server
             setJobsData(prev => {
                 const updatedJobs = { ...prev };
                 updatedJobs[jobId].applicants = updatedJobs[jobId].applicants.map(app => 
@@ -108,16 +107,17 @@ const Applicants = () => {
     if (loading) return <div className="p-10 text-center font-bold text-green-600">Loading Job Hierarchy...</div>;
     if (error) return <div className="p-10 text-center text-red-500 font-bold">{error}</div>;
 
-    const companyName = Object.values(jobsData)[0]?.company || "Employer";
+    // 💡 Pull the full company name from the first group for the header
+    const companyDisplayName = Object.values(jobsData)[0]?.company || "Employer";
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
-            <header className="mb-8">
+            <header className="mb-8 border-b pb-4">
                 <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
-                    {companyName}'s Job Applicants
+                    {companyDisplayName}'s Job Applicants
                 </h2>
-                <p className="text-slate-500 font-medium italic">
-                    Manage and review candidate performance across your postings.
+                <p className="text-slate-500 font-medium">
+                    Reviewing candidates for <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active positions.
                 </p>
             </header>
 
@@ -145,10 +145,11 @@ const Applicants = () => {
                                             <FiCheckCircle className="text-green-500"/> {data.applicants.length} Candidates
                                         </span>
                                         <span className="text-slate-300">|</span>
-                                        <span className="flex items-center gap-1 uppercase tracking-wider text-[10px] bg-slate-200 px-2 py-0.5 rounded text-slate-700">
+                                        {/* 💡 Metadata labels (Remote/Type) */}
+                                        <span className="bg-slate-200 px-2 py-0.5 rounded text-[10px] uppercase text-slate-700">
                                             {data.type} • {data.remote}
                                         </span>
-                                        <span className="flex items-center gap-1"><FiMapPin size={12}/> {data.location}</span>
+                                        <span className="flex items-center gap-1 text-[11px]"><FiMapPin size={12}/> {data.location}</span>
                                     </div>
                                 </div>
                             </div>
@@ -161,28 +162,28 @@ const Applicants = () => {
                         {expandedJobs[jobId] && (
                             <div className="border-t bg-white p-5 animate-in slide-in-from-top-2 duration-300">
                                 <div className="flex justify-between items-center mb-6 px-2">
-                                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Application Queue</h4>
+                                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Applicant Queue</h4>
                                     <Link to={`/jobs/${jobId}`} className="text-xs text-green-600 font-bold hover:underline flex items-center gap-1">
-                                        <FiExternalLink /> Preview Public Post
+                                        <FiExternalLink /> Preview Post
                                     </Link>
                                 </div>
 
                                 <div className="overflow-x-auto rounded-xl border border-slate-100">
-                                    <table className="table w-full border-collapse">
+                                    <table className="table w-full">
                                         <thead className="bg-slate-50 text-slate-500 uppercase text-[10px]">
                                             <tr>
-                                                <th className="py-4">Candidate</th>
-                                                <th>Applied Date</th>
-                                                <th>Status Decision</th>
-                                                <th className="text-right">Action</th>
+                                                <th className="py-4">Applicant</th>
+                                                <th>Date Applied</th>
+                                                <th>Decision</th>
+                                                <th className="text-right">Profile</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {data.applicants.map((app) => (
-                                                <tr key={app.id} className="hover:bg-slate-50/50 transition-colors border-b last:border-0 border-slate-100">
+                                                <tr key={app.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0">
                                                     <td>
                                                         <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold shadow-sm uppercase">
+                                                            <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold uppercase">
                                                                 {app.applicant?.first_name?.[0]}{app.applicant?.last_name?.[0]}
                                                             </div>
                                                             <div>
@@ -194,12 +195,12 @@ const Applicants = () => {
                                                         </div>
                                                     </td>
                                                     <td className="text-xs text-slate-500 font-semibold">
-                                                        <FiCalendar className="inline mr-1" /> {new Date(app.applied_at).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
+                                                        <FiCalendar className="inline mr-1" /> {new Date(app.applied_at).toLocaleDateString()}
                                                     </td>
                                                     <td>
                                                         <div className="flex items-center gap-2">
                                                             <select
-                                                                className={`select select-bordered select-xs w-36 font-bold capitalize text-[11px] transition-all ${getStatusClass(app.status)}`}
+                                                                className={`select select-bordered select-xs w-36 font-bold capitalize text-[11px] ${getStatusClass(app.status)}`}
                                                                 value={app.status}
                                                                 onChange={(e) => handleStatusChange(app.id, jobId, e.target.value)}
                                                                 disabled={updatingAppId === app.id || app.status === "withdrawn"}
@@ -218,7 +219,7 @@ const Applicants = () => {
                                                             to={`/Dashboard/applications/${app.id}`} 
                                                             className="btn btn-sm btn-ghost text-green-600 font-black hover:bg-green-50"
                                                         >
-                                                            View Profile
+                                                            Open CV
                                                         </Link>
                                                     </td>
                                                 </tr>
