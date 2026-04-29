@@ -178,60 +178,62 @@ const Applicants = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {data.applicants.map((app) => {
-                                                const u = app.applicant || {};
-                                                
-                                                // 💡 Integrated your working logic here:
-                                                const displayName = u.first_name || u.last_name 
-                                                    ? `${u.first_name || ''} ${u.last_name || ''}`.trim() 
-                                                    : u.username || "System User";
+                                          {data.applicants.map((app) => {
+                                            // 1. Get the applicant object (nested data)
+                                            const u = app.applicant || {};
 
-                                                return (
-                                                    <tr key={app.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0">
-                                                        <td>
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold uppercase shadow-sm">
-                                                                    {displayName[0]}
-                                                                </div>
-                                                                <div>
-                                                                    <p className="font-bold text-slate-700 text-sm">
-                                                                        {displayName}
-                                                                    </p>
-                                                                    <p className="text-xs text-slate-400 font-medium">{u.email}</p>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-xs text-slate-500 font-semibold">
-                                                            <FiCalendar className="inline mr-1" /> {new Date(app.applied_at).toLocaleDateString()}
-                                                        </td>
-                                                        <td>
-                                                            <div className="flex items-center gap-2">
-                                                                <select
-                                                                    className={`select select-bordered select-xs w-36 font-bold capitalize text-[11px] ${getStatusClass(app.status)}`}
-                                                                    value={app.status}
-                                                                    onChange={(e) => handleStatusChange(app.id, jobId, e.target.value)}
-                                                                    disabled={updatingAppId === app.id || app.status === "withdrawn"}
-                                                                >
-                                                                    {statusChoices.map(s => (
-                                                                        <option key={s.value} value={s.value} disabled={s.value === "withdrawn"}>
-                                                                            {s.label}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                                {updatingAppId === app.id && <span className="loading loading-spinner loading-xs text-green-500"></span>}
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-right">
-                                                            <Link 
-                                                                to={`/Dashboard/applications/${app.id}`} 
-                                                                className="btn btn-sm btn-ghost text-green-600 font-black"
-                                                            >
-                                                                Review
-                                                            </Link>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
+                                            // 2. Use your exact working logic from ManageUsers
+                                            const fullName = u.first_name || u.last_name 
+                                              ? `${u.first_name || ''} ${u.last_name || ''}`.trim() 
+                                              : u.username || "System User";
+
+                                            return (
+                                              <tr key={app.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0">
+                                                <td>
+                                                  <div className="flex items-center gap-3">
+                                                    {/* Avatar with the first letter of whatever name we found */}
+                                                    <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold uppercase shadow-sm">
+                                                      {fullName.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                      {/* 🎯 This is the fix: Displaying the combined fullName */}
+                                                      <p className="font-bold text-slate-700 text-sm">
+                                                        {fullName}
+                                                      </p>
+                                                      <p className="text-xs text-slate-400 font-medium">{u.email}</p>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                                <td className="text-xs text-slate-500 font-semibold">
+                                                  <FiCalendar className="inline mr-1" /> {new Date(app.applied_at).toLocaleDateString()}
+                                                </td>
+                                                <td>
+                                                  <div className="flex items-center gap-2">
+                                                    <select
+                                                      className={`select select-bordered select-xs w-36 font-bold capitalize text-[11px] ${getStatusClass(app.status)}`}
+                                                      value={app.status}
+                                                      onChange={(e) => handleStatusChange(app.id, jobId, e.target.value)}
+                                                      disabled={updatingAppId === app.id || app.status === "withdrawn"}
+                                                    >
+                                                      {statusChoices.map(s => (
+                                                        <option key={s.value} value={s.value} disabled={s.value === "withdrawn"}>
+                                                          {s.label}
+                                                        </option>
+                                                      ))}
+                                                    </select>
+                                                  </div>
+                                                </td>
+                                                <td className="text-right">
+                                                  <Link 
+                                                    to={`/Dashboard/applications/${app.id}`} 
+                                                    className="btn btn-sm btn-ghost text-green-600 font-black"
+                                                  >
+                                                    Review
+                                                  </Link>
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
                                         </tbody>
                                     </table>
                                 </div>
