@@ -16,8 +16,7 @@ const SeekerDashboard = ({ data }) => {
           { to: "/dashboard/seeker/my-applications", icon: FiSend, title: "Total Applications", value: applications_count, color: "bg-green-100 text-green-700" },
           { to: "/dashboard/seeker/my-applications", icon: FiCalendar, title: "Interviewed", value: interviews, color: "bg-blue-100 text-blue-700" },
           { to: "/dashboard/seeker/my-applications", icon: FiCheckCircle, title: "Job Offers", value: offers, color: "bg-yellow-100 text-yellow-700" },
-          // 💡 NEW CARD: Points to the Status Overview
-          { to: "/dashboard/seeker/applications-status", icon: FiActivity, title: "Application Status", value: "Track", color: "bg-purple-100 text-purple-700" },
+          { to: "/dashboard/seeker/applications-status", icon: FiActivity, title: "Application Status", value: applications_count, color: "bg-purple-100 text-purple-700" },
         ].map((item, idx) => (
           <Link
             key={idx}
