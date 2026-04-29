@@ -7,7 +7,9 @@ const EmployerDashboard = ({ data }) => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h2 className="text-3xl font-bold text-green-700 mb-8">Employer Dashboard</h2>
+      <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight mb-8">
+          {user?.full_name || `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Employer'}'s Dashboard
+      </h2>
       
       {/* Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
