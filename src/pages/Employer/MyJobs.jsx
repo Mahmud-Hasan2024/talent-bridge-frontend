@@ -1,86 +1,148 @@
-import { FiBriefcase, FiSend, FiStar, FiTrendingUp } from "react-icons/fi";
-import { format } from "date-fns";
-import { Link } from "react-router"; 
+import { useEffect, useState } from "react";
+import apiClient from "../../services/api-client";
+import useAuthContext from "../../hooks/useAuthContext";
+import { Link } from "react-router";
+import { FiExternalLink } from "react-icons/fi"; // Added an icon for better UX
 
-const EmployerDashboard = ({ data }) => {
-  const { jobs_posted, total_applications, featured_jobs, top_jobs } = data;
+const MyJobs = () => {
+    const { user, authTokens } = useAuthContext();
+    const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [deleteError, setDeleteError] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-  return (
-    <div className="container mx-auto py-8 px-4">
-      <h2 className="text-3xl font-bold text-green-700 mb-8">Employer Overview</h2>
+    useEffect(() => {
+        if (!authTokens?.access || !user?.id) {
+            setLoading(false);
+            setError(null);
+            return;
+        }
 
-      {/* Stats Cards Row */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-10">
-        <Link to="/dashboard/employer/my-jobs" className="transition transform hover:scale-105">
-          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 flex flex-col items-start w-full h-full">
-            <div className="p-3 bg-green-100 rounded-lg text-green-700 mb-4">
-              <FiBriefcase size={24} />
+        const fetchJobs = async () => {
+            setLoading(true);
+            setError(null);
+
+            const employerFilter = `employer=${user.id}`;
+            const paginationBypass = `no_pagination=true`;
+            const url = `/jobs/?${employerFilter}&${paginationBypass}`;
+
+            try {
+                const res = await apiClient.get(url, {
+                    headers: { Authorization: `JWT ${authTokens.access}` },
+                });
+                const data = res.data.results || res.data;
+                setJobs(data);
+            } catch (err) {
+                console.error("Error fetching my jobs:", err.response?.data || err);
+                setError("Failed to load your posted jobs.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchJobs();
+    }, [authTokens, user]);
+
+
+    const handleDeleteJob = async (jobId) => {
+        if (!window.confirm("Are you sure you want to permanently delete this job?")) {
+          return;
+        }
+    
+        setIsDeleting(true);
+        setDeleteError(null);
+    
+        try {
+          await apiClient.delete(`/jobs/${jobId}/`, {
+            headers: { Authorization: `JWT ${authTokens.access}` },
+          });
+          setJobs(jobs.filter(job => job.id !== jobId));
+          alert(`Job successfully deleted.`);
+        } catch (err) {
+          setDeleteError("Failed to delete the job.");
+        } finally {
+          setIsDeleting(false);
+        }
+      };
+
+    if (loading) return <div className="text-center py-8">Loading your jobs...</div>;
+    if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
+
+    return (
+        <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold text-green-700">
+                    {user?.first_name || 'My'} Posted Jobs ({jobs.length})
+                </h2>
+                <Link to="/Dashboard/employer/post-job" className="btn btn-success text-white">
+                    Post New Job
+                </Link>
             </div>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Jobs Posted</p>
-            <p className="text-3xl font-bold text-gray-800 mt-1">{jobs_posted}</p>
-          </div>
-        </Link>
-        
-        <Link to="/dashboard/employer/applicants" className="transition transform hover:scale-105">
-          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 flex flex-col items-start w-full h-full">
-            <div className="p-3 bg-blue-100 rounded-lg text-blue-700 mb-4">
-              <FiSend size={24} />
-            </div>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Applications</p>
-            <p className="text-3xl font-bold text-gray-800 mt-1">{total_applications}</p>
-          </div>
-        </Link>
-        
-        <Link to="/dashboard/employer/my-jobs" className="transition transform hover:scale-105">
-          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 flex flex-col items-start w-full h-full">
-            <div className="p-3 bg-yellow-100 rounded-lg text-yellow-700 mb-4">
-              <FiStar size={24} />
-            </div>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Featured Jobs</p>
-            <p className="text-3xl font-bold text-gray-800 mt-1">{featured_jobs}</p>
-          </div>
-        </Link>
-      </div>
 
-      <div className="grid gap-8 lg:grid-cols-1">
-        {/* Top Performing Jobs Card */}
-        <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <FiTrendingUp className="mr-2 text-green-700" /> Top Performing Jobs
-          </h3>
-          
-          {top_jobs && top_jobs.length > 0 ? (
-            <ul className="space-y-3">
-              {top_jobs.map((job) => (
-                <li key={job.id}>
-                  <Link 
-                    to={`/dashboard/employer/applicants?job=${job.id}`} 
-                    className="block p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200 border border-transparent hover:border-green-300"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="text-lg font-medium text-green-700">{job.title}</p>
-                        <p className="text-sm text-gray-600">
-                          Total Applications: <span className="font-bold">{job.live_applications_count}</span>
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-                          View Applications →
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600">No active job performance data available.</p>
-          )}
+            {deleteError && (
+                <div className="alert alert-error mb-4">
+                    <p>{deleteError}</p>
+                </div>
+            )}
+
+            {jobs.length === 0 ? (
+                <p className="text-gray-500">
+                    No jobs posted yet.{" "}
+                    <Link to="/Dashboard/employer/post-job" className="text-green-600 hover:underline">
+                        Post one now!
+                    </Link>
+                </p>
+            ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                    {jobs.map((job) => (
+                        <div
+                            key={job.id}
+                            className="bg-white p-5 rounded-xl shadow-lg border border-gray-100 transition duration-300 hover:shadow-xl flex flex-col justify-between"
+                        >
+                            <div>
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-xl text-gray-800">{job.title}</h3>
+                                    {/* 💡 VIEW POST BUTTON (Public Link) */}
+                                    <Link 
+                                        to={`/jobs/${job.id}`} 
+                                        className="text-blue-500 hover:text-blue-700 p-1"
+                                        title="View public post"
+                                    >
+                                        <FiExternalLink size={20} />
+                                    </Link>
+                                </div>
+                                <p className="text-gray-600 mb-3">{job.location}</p>
+                            </div>
+
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                <Link
+                                    to={`/dashboard/employer/jobs/${job.id}/edit`}
+                                    className="btn btn-outline btn-sm"
+                                >
+                                    Edit
+                                </Link>
+                                <Link
+                                    to={`/dashboard/employer/applicants?job_id=${job.id}`}
+                                    className="btn bg-green-600 hover:bg-green-700 btn-sm text-white"
+                                >
+                                    View Applicants
+                                </Link>
+
+                                <button
+                                    onClick={() => handleDeleteJob(job.id)}
+                                    className="btn btn-error btn-sm text-white"
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? "Deleting..." : "Delete"}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default EmployerDashboard;
+export default MyJobs;
