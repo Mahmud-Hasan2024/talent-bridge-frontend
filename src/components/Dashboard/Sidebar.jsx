@@ -6,6 +6,8 @@ import {
   FiUser,
   FiUsers,
   FiHome,
+  FiSend,
+  FiActivity,
 } from "react-icons/fi";
 import { GiSuitcase } from "react-icons/gi";
 import { Link, useLocation } from "react-router";
@@ -25,7 +27,12 @@ const Sidebar = () => {
     { to: "/Dashboard/job-categories", icon: FiTag, label: "Categories" },
     {
       to: "/Dashboard/seeker/my-applications",
-      icon: FiUsers,
+      icon: FiSend,
+      label: "My Applications",
+    },
+    {
+      to: "/Dashboard/seeker/applications-status",
+      icon: FiActivity,
       label: "My Applications",
     },
   ];

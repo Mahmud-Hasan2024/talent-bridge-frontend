@@ -29,6 +29,7 @@ import Profile from "../pages/Profile";
 
 // Seeker
 import MyApplications from "../pages/Seeker/MyApplications";
+import ApplicationStatus from "../pages/Seeker/ApplicationStatus";
 
 // Employer
 import MyJobs from "../pages/Employer/MyJobs";
@@ -104,6 +105,14 @@ function AppRoutes() {
           element={
             <RoleGuard allowedRoles={["seeker"]}>
               <MyApplications />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="seeker/applications-status"
+          element={
+            <RoleGuard allowedRoles={["seeker"]}>
+              <ApplicationStatus />
             </RoleGuard>
           }
         />
