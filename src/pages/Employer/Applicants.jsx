@@ -114,7 +114,7 @@ const Applicants = () => {
             {/* 🏢 HEADER SECTION */}
             <header className="mb-8 border-b border-slate-100 pb-5">
                 <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
-                    Employee's Job Applicants
+                    Job Applicants
                 </h2>
                 <p className="text-slate-500 font-medium">
                     Managing <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active job posts.
