@@ -73,7 +73,7 @@ const MyJobs = () => {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold text-green-700">
-                    My Posted Jobs ({jobs.length})
+                    {user?.first_name || 'My'} Posted Jobs ({jobs.length})
                 </h2>
                 <Link to="/Dashboard/employer/post-job" className="btn btn-success text-white">
                     Post New Job
