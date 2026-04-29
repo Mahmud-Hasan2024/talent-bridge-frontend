@@ -41,6 +41,7 @@ import ManageJobs from "../pages/Admin/ManageJobs";
 import CategoryManager from "../pages/Admin/CategoryManager";
 import ManageUsers from "../pages/Admin/ManageUsers";
 import AllApplicants from "../pages/Admin/AllApplicants";
+import AllJobs from "../pages/Admin/AllJobs";
 
 function AppRoutes() {
   return (
@@ -82,6 +83,14 @@ function AppRoutes() {
               </RoleGuard>
             }
           />
+        <Route
+          path="admin/all-jobs"
+          element={
+            <RoleGuard allowedRoles={["admin"]}>
+              <AllJobs />
+            </RoleGuard>
+          }
+        />
           <Route
             path="job-categories"
             element={
