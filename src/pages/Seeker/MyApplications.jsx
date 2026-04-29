@@ -11,7 +11,6 @@ const MyApplications = () => {
   const [error, setError] = useState(null);
   const [isWithdrawing, setIsWithdrawing] = useState({});
 
-  // --- Data Fetching Logic ---
   useEffect(() => {
     if (!user || !authTokens?.access || !user.id || user.role !== "seeker") {
       setLoading(false);
@@ -41,7 +40,6 @@ const MyApplications = () => {
     fetchMyApplications();
   }, [user, authTokens]);
 
-  // --- Withdrawal Logic ---
   const handleWithdraw = async (applicationId) => {
     if (!window.confirm("Are you sure you want to withdraw this application? This action cannot be undone.")) {
       return;
@@ -72,7 +70,6 @@ const MyApplications = () => {
     }
   };
 
-  // --- Helper for Status Styling (Centered & Uniform Width) ---
   const getStatusBadge = (status) => {
     const statusLower = status?.toLowerCase();
     let colorClass = 'badge-info'; 
@@ -114,9 +111,9 @@ const MyApplications = () => {
                 <th className="w-12">#</th>
                 <th>Job Title</th>
                 <th>Company</th>
-                <th className="text-center">Status</th> {/* Centered Header */}
+                <th className="text-center">Status</th> 
                 <th>Applied On</th>
-                <th>Actions</th>
+                <th className="text-center">Actions</th> {/* Centered Header */}
               </tr>
             </thead>
             <tbody>
@@ -141,7 +138,6 @@ const MyApplications = () => {
                     </td>
                     <td>{app.job_employer_name || app.job?.company_name || "N/A"}</td>
                     
-                    {/* Centered Status Column */}
                     <td className="text-center">
                       <div className="flex justify-center">
                         {getStatusBadge(app.status)}
@@ -149,27 +145,31 @@ const MyApplications = () => {
                     </td>
 
                     <td>{new Date(app.applied_at).toLocaleDateString()}</td>
-                    <td className="flex gap-2 items-center">
-                      <Link
-                        to={`/jobs/${app.job?.id}`}
-                        className="btn btn-outline btn-xs btn-info"
-                      >
-                        View Job
-                      </Link>
-                      
-                      {isActionable && (
-                        <button
-                          onClick={() => handleWithdraw(app.id)}
-                          className={`btn btn-outline btn-xs ${withdrawing ? 'btn-disabled text-gray-400' : 'btn-warning'}`}
-                          disabled={withdrawing}
+                    
+                    {/* Centered Actions Column */}
+                    <td className="text-center">
+                      <div className="flex justify-center gap-2 items-center">
+                        <Link
+                          to={`/jobs/${app.job?.id}`}
+                          className="btn btn-outline btn-xs btn-info"
                         >
-                          {withdrawing ? (
-                            <FaSpinner className="animate-spin" />
-                          ) : (
-                            <><FaUndoAlt /> Withdraw</>
-                          )}
-                        </button>
-                      )}
+                          View Job
+                        </Link>
+                        
+                        {isActionable && (
+                          <button
+                            onClick={() => handleWithdraw(app.id)}
+                            className={`btn btn-outline btn-xs ${withdrawing ? 'btn-disabled text-gray-400' : 'btn-warning'}`}
+                            disabled={withdrawing}
+                          >
+                            {withdrawing ? (
+                              <FaSpinner className="animate-spin" />
+                            ) : (
+                              <><FaUndoAlt /> Withdraw</>
+                            )}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
