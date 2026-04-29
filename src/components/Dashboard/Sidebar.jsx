@@ -33,7 +33,7 @@ const Sidebar = () => {
   const employerMenus = [
     { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
     { to: "/Dashboard/employer/post-job", icon: FiPlusCircle, label: "Post Job" },
-    { to: "/Dashboard/employer/my-jobs", icon: FiBriefcase, label: "My Jobs" },
+    { to: "/Dashboard/employer/jobs", icon: FiBriefcase, label: "My Jobs" },
     {
       to: "/Dashboard/employer/applicants",
       icon: FiUsers,
