@@ -47,7 +47,7 @@ const Sidebar = () => {
     { to: "/Dashboard/admin/all-jobs", icon: FiBriefcase, label: "All Jobs" },
     // { to: "/Dashboard/admin/jobs", icon: FiBriefcase, label: "Manage Jobs" },
     { to: "/Dashboard/admin/categories", icon: FiTag, label: "Manage Categories" },
-    { to: "/Dashboard/admin/users", icon: FiUser, label: "Manage Users" },
+    { to: "/Dashboard/admin/users", icon: FiUser, label: "User List" },
     { to: "/Dashboard/admin/applicants", icon: FiUsers, label: "All Applicants" },
   ];
 
