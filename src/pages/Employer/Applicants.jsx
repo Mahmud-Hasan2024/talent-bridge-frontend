@@ -8,7 +8,8 @@ import {
     FiBriefcase, 
     FiCalendar, 
     FiExternalLink,
-    FiCheckCircle
+    FiCheckCircle,
+    FiMapPin
 } from "react-icons/fi";
 
 const Applicants = () => {
@@ -42,11 +43,12 @@ const Applicants = () => {
 
                 if (!acc[jobId]) {
                     acc[jobId] = {
-                        // 💡 FIX 1: Added company name to the group so the header can find it
-                        company: app.job?.company_name || "Employer",
+                        // 💡 FIX: Ensure full metadata is captured here
+                        company: app.job?.company_name || "Employer", 
                         title: app.job?.title || "Untitled Position",
-                        location: app.job?.location || "Remote",
+                        location: app.job?.location || "N/A",
                         type: app.job?.employment_type || "N/A",
+                        remote: app.job?.remote_option || "On-site",
                         applicants: []
                     };
                 }
@@ -76,8 +78,7 @@ const Applicants = () => {
                 status: newStatus,
             });
 
-            // 💡 FIX 2: Corrected state update to match your previous working logic
-            // We replace the entire application object with the response from the server
+            // 💡 Update logic: replaces the object with fresh data from server
             setJobsData(prev => {
                 const updatedJobs = { ...prev };
                 updatedJobs[jobId].applicants = updatedJobs[jobId].applicants.map(app => 
@@ -94,12 +95,12 @@ const Applicants = () => {
         }
     };
 
-    // Helper for your original badge colors
     const getStatusClass = (status) => {
         switch (status) {
             case "accepted": return "bg-success text-white";
             case "rejected": return "bg-error text-white";
             case "interviewed": return "bg-warning";
+            case "offered": return "bg-info text-white";
             default: return "bg-slate-100";
         }
     };
@@ -107,21 +108,24 @@ const Applicants = () => {
     if (loading) return <div className="p-10 text-center font-bold text-green-600">Loading Job Hierarchy...</div>;
     if (error) return <div className="p-10 text-center text-red-500 font-bold">{error}</div>;
 
-    const firstJob = Object.values(jobsData)[0];
+    const companyName = Object.values(jobsData)[0]?.company || "Employer";
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
             <header className="mb-8">
-                <h2 className="text-3xl font-black text-slate-800">
-                    {/* 💡 Now correctly displays "Company Name's Job Applicants" */}
-                    {firstJob?.company}'s Job Applicants
+                <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
+                    {companyName}'s Job Applicants
                 </h2>
-                <p className="text-slate-500 font-medium">Manage your candidate pipeline.</p>
+                <p className="text-slate-500 font-medium italic">
+                    Manage and review candidate performance across your postings.
+                </p>
             </header>
 
             <div className="space-y-4">
                 {Object.entries(jobsData).map(([jobId, data]) => (
                     <div key={jobId} className="border rounded-2xl bg-white shadow-sm overflow-hidden border-slate-200">
+                        
+                        {/* 🛠️ JOB TOGGLE SECTION */}
                         <button 
                             onClick={() => toggleJob(jobId)}
                             className={`w-full flex items-center justify-between p-5 text-left transition group ${
@@ -129,13 +133,22 @@ const Applicants = () => {
                             }`}
                         >
                             <div className="flex items-center gap-5">
-                                <div className={`p-3 rounded-xl ${expandedJobs[jobId] ? "bg-green-600 text-white" : "bg-slate-100 text-slate-500"}`}>
+                                <div className={`p-3 rounded-xl transition-all group-hover:scale-110 ${expandedJobs[jobId] ? "bg-green-600 text-white" : "bg-slate-100 text-slate-500"}`}>
                                     <FiBriefcase size={22} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-xl text-slate-800">{data.title}</h3>
-                                    <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 font-semibold">
-                                        <FiCheckCircle className="text-green-500"/> {data.applicants.length} Candidates
+                                    <h3 className="font-bold text-xl text-slate-800 group-hover:text-green-700">
+                                        {data.title}
+                                    </h3>
+                                    <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-slate-500 font-semibold">
+                                        <span className="flex items-center gap-1">
+                                            <FiCheckCircle className="text-green-500"/> {data.applicants.length} Candidates
+                                        </span>
+                                        <span className="text-slate-300">|</span>
+                                        <span className="flex items-center gap-1 uppercase tracking-wider text-[10px] bg-slate-200 px-2 py-0.5 rounded text-slate-700">
+                                            {data.type} • {data.remote}
+                                        </span>
+                                        <span className="flex items-center gap-1"><FiMapPin size={12}/> {data.location}</span>
                                     </div>
                                 </div>
                             </div>
@@ -144,46 +157,49 @@ const Applicants = () => {
                             </div>
                         </button>
 
+                        {/* 📋 APPLICANTS TABLE */}
                         {expandedJobs[jobId] && (
-                            <div className="border-t bg-white p-5">
+                            <div className="border-t bg-white p-5 animate-in slide-in-from-top-2 duration-300">
                                 <div className="flex justify-between items-center mb-6 px-2">
-                                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Application Queue</h4>
+                                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Application Queue</h4>
                                     <Link to={`/jobs/${jobId}`} className="text-xs text-green-600 font-bold hover:underline flex items-center gap-1">
-                                        <FiExternalLink /> View Post
+                                        <FiExternalLink /> Preview Public Post
                                     </Link>
                                 </div>
 
                                 <div className="overflow-x-auto rounded-xl border border-slate-100">
-                                    <table className="table w-full">
+                                    <table className="table w-full border-collapse">
                                         <thead className="bg-slate-50 text-slate-500 uppercase text-[10px]">
                                             <tr>
-                                                <th>Applicant</th>
-                                                <th>Date</th>
+                                                <th className="py-4">Candidate</th>
+                                                <th>Applied Date</th>
                                                 <th>Status Decision</th>
                                                 <th className="text-right">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {data.applicants.map((app) => (
-                                                <tr key={app.id} className="hover:bg-slate-50/50">
+                                                <tr key={app.id} className="hover:bg-slate-50/50 transition-colors border-b last:border-0 border-slate-100">
                                                     <td>
                                                         <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold">
+                                                            <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold shadow-sm uppercase">
                                                                 {app.applicant?.first_name?.[0]}{app.applicant?.last_name?.[0]}
                                                             </div>
                                                             <div>
-                                                                <p className="font-bold text-slate-700 text-sm">{app.applicant?.first_name} {app.applicant?.last_name}</p>
-                                                                <p className="text-xs text-slate-400">{app.applicant?.email}</p>
+                                                                <p className="font-bold text-slate-700 text-sm">
+                                                                    {app.applicant?.first_name} {app.applicant?.last_name}
+                                                                </p>
+                                                                <p className="text-xs text-slate-400 font-medium">{app.applicant?.email}</p>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="text-xs text-slate-500">
-                                                        <FiCalendar className="inline mr-1" /> {new Date(app.applied_at).toLocaleDateString()}
+                                                    <td className="text-xs text-slate-500 font-semibold">
+                                                        <FiCalendar className="inline mr-1" /> {new Date(app.applied_at).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
                                                     </td>
                                                     <td>
                                                         <div className="flex items-center gap-2">
                                                             <select
-                                                                className={`select select-bordered select-xs w-32 font-bold capitalize text-[11px] ${getStatusClass(app.status)}`}
+                                                                className={`select select-bordered select-xs w-36 font-bold capitalize text-[11px] transition-all ${getStatusClass(app.status)}`}
                                                                 value={app.status}
                                                                 onChange={(e) => handleStatusChange(app.id, jobId, e.target.value)}
                                                                 disabled={updatingAppId === app.id || app.status === "withdrawn"}
@@ -200,9 +216,9 @@ const Applicants = () => {
                                                     <td className="text-right">
                                                         <Link 
                                                             to={`/Dashboard/applications/${app.id}`} 
-                                                            className="btn btn-sm btn-ghost text-green-600 font-black"
+                                                            className="btn btn-sm btn-ghost text-green-600 font-black hover:bg-green-50"
                                                         >
-                                                            View CV
+                                                            View Profile
                                                         </Link>
                                                     </td>
                                                 </tr>
