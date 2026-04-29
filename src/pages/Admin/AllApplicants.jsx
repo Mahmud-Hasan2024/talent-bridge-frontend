@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import apiClient from "../../services/api-client";
 import useAuthContext from "../../hooks/useAuthContext";
 import { Link } from "react-router";
-import { FiChevronDown, FiChevronRight, FiUser, FiBriefcase, FiMapPin } from "react-icons/fi";
+import { FiChevronDown, FiChevronRight, FiBriefcase, FiMapPin, FiEye, FiExternalLink } from "react-icons/fi";
 
 const AllApplicants = () => {
     const { authTokens, user } = useAuthContext();
@@ -14,7 +14,6 @@ const AllApplicants = () => {
         if (user?.role !== "admin") return;
         setLoading(true);
         try {
-            // Fetching applications to get the link between Job -> Applicant
             const url = "/applications/?no_pagination=true";
             const res = await apiClient.get(url, {
                 headers: { Authorization: `JWT ${authTokens.access}` },
@@ -22,14 +21,17 @@ const AllApplicants = () => {
 
             const allApps = res.data.results || res.data;
 
-            // 💡 GROUPING LOGIC: Group by Job ID
             const groupedByJob = allApps.reduce((acc, app) => {
                 const jobId = app.job?.id;
                 if (!acc[jobId]) {
                     acc[jobId] = {
+                        id: jobId,
                         title: app.job?.title || "Untitled Position",
                         company: app.job_employer_name || app.job?.company_name || "N/A",
-                        location: app.job?.location || "Remote",
+                        location: app.job?.location || "N/A",
+                        // 💡 FIX 2: Pull correct employment data from Serializer
+                        employmentType: app.job?.employment_type || "N/A",
+                        remoteOption: app.job?.remote_option || "On-site",
                         applicants: []
                     };
                 }
@@ -57,7 +59,7 @@ const AllApplicants = () => {
         <div className="p-6 max-w-6xl mx-auto">
             <header className="mb-8">
                 <h2 className="text-3xl font-black text-slate-800">Job Applicant Manager</h2>
-                <p className="text-slate-500">Click any job to see its current applicants.</p>
+                <p className="text-slate-500">Click on a job card to expand or collapse applicants.</p>
             </header>
 
             <div className="space-y-4">
@@ -67,42 +69,62 @@ const AllApplicants = () => {
                         {/* 🛠️ JOB TOGGLE HEADER */}
                         <button 
                             onClick={() => toggleJob(jobId)}
-                            className={`w-full flex items-center justify-between p-5 text-left transition ${
+                            // 💡 FIX 1: Added 'cursor-pointer' and 'group' for better clickability feedback
+                            className={`w-full flex items-center justify-between p-5 text-left transition cursor-pointer group ${
                                 expandedJobs[jobId] ? "bg-blue-50" : "bg-white hover:bg-gray-50"
                             }`}
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`p-2 rounded-lg ${expandedJobs[jobId] ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-500"}`}>
+                                {/* Icon grows slightly on hover to signal interactivity */}
+                                <div className={`p-2 rounded-lg transition-transform group-hover:scale-110 ${expandedJobs[jobId] ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-500"}`}>
                                     <FiBriefcase size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg text-slate-800 leading-tight">
+                                    <h3 className="font-bold text-lg text-slate-800 leading-tight group-hover:text-blue-700 transition-colors">
                                         {data.title}
                                     </h3>
-                                    <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-slate-500">
                                         <span className="font-semibold text-blue-600">{data.company}</span>
                                         <span className="flex items-center gap-1"><FiMapPin size={12}/> {data.location}</span>
+                                        {/* 💡 FIX 2: Correcting the Remote/Type display */}
+                                        <span className="bg-gray-100 px-2 py-0.5 rounded text-[10px] uppercase font-bold text-gray-600">
+                                            {data.employmentType} • {data.remoteOption}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             
                             <div className="flex items-center gap-4">
-                                <div className="hidden sm:block text-right">
+                                <div className="hidden sm:block text-right mr-2">
                                     <span className="text-xs font-bold uppercase text-slate-400">Applicants</span>
                                     <p className="text-lg font-black text-slate-700">{data.applicants.length}</p>
                                 </div>
-                                {expandedJobs[jobId] ? <FiChevronDown size={24} className="text-blue-600"/> : <FiChevronRight size={24} className="text-gray-300"/>}
+                                {expandedJobs[jobId] ? <FiChevronDown size={24} className="text-blue-600"/> : <FiChevronRight size={24} className="text-gray-300 group-hover:text-blue-400 transition-colors"/>}
                             </div>
                         </button>
 
                         {/* 📋 APPLICANTS TABLE (HIDDEN BY DEFAULT) */}
                         {expandedJobs[jobId] && (
                             <div className="border-t bg-white p-4">
-                                <div className="flex justify-between items-center mb-4 px-2">
+                                <div className="flex flex-wrap justify-between items-center mb-4 px-2 gap-3">
                                     <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Candidate List</h4>
-                                    <Link to={`/dashboard/admin/jobs/${jobId}/edit`} className="text-xs text-blue-600 font-bold hover:underline">
-                                        Edit Job Details
-                                    </Link>
+                                    
+                                    <div className="flex items-center gap-4">
+                                        {/* 💡 FIX 3: Link to view the Job Post */}
+                                        <Link 
+                                            to={`/jobs/${jobId}`} 
+                                            className="flex items-center gap-1 text-xs text-green-600 font-bold hover:underline"
+                                        >
+                                            <FiExternalLink size={14}/> View Public Post
+                                        </Link>
+
+                                        <Link 
+                                            to={`/dashboard/admin/jobs/${jobId}/edit`} 
+                                            className="flex items-center gap-1 text-xs text-blue-600 font-bold hover:underline"
+                                        >
+                                            <FiEye size={14}/> Edit Job Details
+                                        </Link>
+                                    </div>
                                 </div>
 
                                 <div className="overflow-x-auto rounded-lg border border-gray-100">
@@ -121,7 +143,7 @@ const AllApplicants = () => {
                                                 <tr key={app.id} className="hover:bg-blue-50/50">
                                                     <td>
                                                         <div className="flex items-center gap-2">
-                                                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                                                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs uppercase">
                                                                 {app.applicant?.first_name?.[0]}{app.applicant?.last_name?.[0]}
                                                             </div>
                                                             <span className="font-semibold text-slate-700">
