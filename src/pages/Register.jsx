@@ -222,10 +222,17 @@ const Register = () => {
 
             <button
               type="submit"
-              className="btn bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-amber-50 w-full"
+              className="btn bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-amber-50 w-full disabled:bg-gray-400 disabled:text-gray-200 disabled:border-gray-400"
               disabled={loading}
             >
-              {loading ? "Registering..." : "Register"}
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-xs"></span>
+                  Registering...
+                </>
+              ) : (
+                "Register"
+              )}
             </button>
           </form>
 
