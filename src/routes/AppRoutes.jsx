@@ -108,14 +108,14 @@ function AppRoutes() {
             </RoleGuard>
           }
         />
-        {/* <Route
+        <Route
           path="employer/my-jobs"
           element={
             <RoleGuard allowedRoles={["employer"]}>
               <MyJobs />
             </RoleGuard>
           }
-        /> */}
+        />
         <Route
           path="employer/post-job"
           element={
