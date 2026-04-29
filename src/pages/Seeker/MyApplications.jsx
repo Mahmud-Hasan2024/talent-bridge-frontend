@@ -9,7 +9,7 @@ const MyApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isWithdrawing, setIsWithdrawing] = useState({}); // State to track withdrawal status per application
+  const [isWithdrawing, setIsWithdrawing] = useState({});
 
   // --- Data Fetching Logic ---
   useEffect(() => {
@@ -22,22 +22,16 @@ const MyApplications = () => {
     const fetchMyApplications = async () => {
       setLoading(true);
       setError(null);
-
-      // Using the base endpoint since we are passing the token in the headers
       const url = `/applications/?applicant=${user.id}&no_pagination=true`;
 
       try {
         const response = await authApiClient.get(url, {
           headers: { Authorization: `JWT ${authTokens.access}` }, 
         });
-
         const data = response.data.results || response.data;
         setApplications(data);
       } catch (err) {
-        console.error(
-          "Failed to load my applications:",
-          err.response?.data || err
-        );
+        console.error("Failed to load my applications:", err.response?.data || err);
         setError("Failed to load application data. Please check network.");
       } finally {
         setLoading(false);
@@ -57,39 +51,28 @@ const MyApplications = () => {
     setError(null);
 
     try {
-      // POST /applications/{id}/withdraw/
       await authApiClient.post(`/applications/${applicationId}/withdraw/`, null, {
-         // Using headers again for explicit authorization, though interceptor should cover it
          headers: { Authorization: `JWT ${authTokens.access}` }, 
       });
 
-      // Update local state: change status to 'withdrawn'
       setApplications((prevApps) =>
         prevApps.map((app) =>
           app.id === applicationId ? { ...app, status: 'withdrawn' } : app
         )
       );
       alert("Application successfully withdrawn!");
-
     } catch (err) {
       const status = err.response?.status;
       const detail = err.response?.data?.detail || "Server error occurred.";
-      console.error("Withdrawal failed:", err);
-      
-      if (status === 400) {
-        alert(`Withdrawal failed: ${detail}. Status may prevent withdrawal.`);
-      } else if (status === 403) {
-        alert("Withdrawal failed: Permission denied. Only the applicant can withdraw.");
-      } else {
-        alert("Withdrawal failed due to a network or server error.");
-      }
-      
+      if (status === 400) alert(`Withdrawal failed: ${detail}`);
+      else if (status === 403) alert("Withdrawal failed: Permission denied.");
+      else alert("Withdrawal failed due to a network or server error.");
     } finally {
       setIsWithdrawing((prev) => ({ ...prev, [applicationId]: false }));
     }
   };
 
-  // --- Helper for Status Styling ---
+  // --- Helper for Status Styling (Centered & Uniform Width) ---
   const getStatusBadge = (status) => {
     const statusLower = status?.toLowerCase();
     let colorClass = 'badge-info'; 
@@ -100,23 +83,20 @@ const MyApplications = () => {
     } else if (statusLower === 'rejected') {
         colorClass = 'badge-error';
     } else if (statusLower === 'withdrawn') {
-        colorClass = 'badge-warning'; // Use warning color for withdrawn status
+        colorClass = 'badge-warning';
     } else if (statusLower === 'reviewed' || statusLower === 'interviewed') {
         colorClass = 'badge-primary';
     }
 
     return (
-        <span className={`badge ${colorClass} text-white`}>
+        <span className={`badge ${colorClass} text-white w-28 h-7 flex items-center justify-center text-center font-medium`}>
             {text}
         </span>
     );
   };
 
-  // --- Rendering ---
-  if (loading)
-    return <div className="text-center py-8">Loading your applied jobs...</div>;
-  if (error)
-    return <div className="text-center py-8 text-red-600">{error}</div>;
+  if (loading) return <div className="text-center py-8">Loading your applied jobs...</div>;
+  if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
 
   return (
     <div className="p-6">
@@ -125,18 +105,16 @@ const MyApplications = () => {
       </h1>
 
       {applications.length === 0 ? (
-        <div className="text-gray-500">
-          You have not applied to any jobs yet.
-        </div>
+        <div className="text-gray-500">You have not applied to any jobs yet.</div>
       ) : (
         <div className="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-100">
           <table className="table table-zebra w-full">
             <thead>
               <tr>
-                <th>#</th>
+                <th className="w-12">#</th>
                 <th>Job Title</th>
                 <th>Company</th>
-                <th>Status</th>
+                <th className="text-center">Status</th> {/* Centered Header */}
                 <th>Applied On</th>
                 <th>Actions</th>
               </tr>
@@ -161,12 +139,15 @@ const MyApplications = () => {
                         {app.job?.title || "Job Deleted"}
                       </Link>
                     </td>
-                    <td>
-                      {app.job_employer_name || app.job?.company_name || "N/A"}
+                    <td>{app.job_employer_name || app.job?.company_name || "N/A"}</td>
+                    
+                    {/* Centered Status Column */}
+                    <td className="text-center">
+                      <div className="flex justify-center">
+                        {getStatusBadge(app.status)}
+                      </div>
                     </td>
-                    <td>
-                      {getStatusBadge(app.status)}
-                    </td>
+
                     <td>{new Date(app.applied_at).toLocaleDateString()}</td>
                     <td className="flex gap-2 items-center">
                       <Link
@@ -176,7 +157,6 @@ const MyApplications = () => {
                         View Job
                       </Link>
                       
-                      {/* 💡 WITHDRAW BUTTON LOGIC */}
                       {isActionable && (
                         <button
                           onClick={() => handleWithdraw(app.id)}
@@ -184,23 +164,12 @@ const MyApplications = () => {
                           disabled={withdrawing}
                         >
                           {withdrawing ? (
-                            <>
-                              <FaSpinner className="animate-spin" />
-                              <span className="ml-1">Withdrawing...</span>
-                            </>
+                            <FaSpinner className="animate-spin" />
                           ) : (
-                            <>
-                              <FaUndoAlt /> 
-                              Withdraw
-                            </>
+                            <><FaUndoAlt /> Withdraw</>
                           )}
                         </button>
                       )}
-                      
-                      {!isActionable && app.status !== 'withdrawn' && (
-                        <span className="text-gray-500 text-xs">Action Finalized</span>
-                      )}
-
                     </td>
                   </tr>
                 );
