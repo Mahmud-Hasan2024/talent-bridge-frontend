@@ -108,14 +108,13 @@ const Applicants = () => {
     if (error) return <div className="p-10 text-center text-red-500 font-bold">{error}</div>;
 
     const firstGroup = Object.values(jobsData)[0];
-    const companyDisplayName = firstGroup?.company || "Employer";
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
             {/* 🏢 HEADER SECTION */}
             <header className="mb-8 border-b border-slate-100 pb-5">
                 <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
-                    {companyDisplayName}'s Job Applicants
+                    Employee's Job Applicants
                 </h2>
                 <p className="text-slate-500 font-medium">
                     Managing <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active job posts.
