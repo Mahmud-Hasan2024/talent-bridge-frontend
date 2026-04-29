@@ -1,7 +1,7 @@
 import StatCard from "../../components/Dashboard/StatCard";
-import { FiSend, FiCalendar, FiCheckCircle, FiSearch } from "react-icons/fi";
+import { FiSend, FiCalendar, FiCheckCircle, FiActivity, FiSearch } from "react-icons/fi";
 import { format } from "date-fns";
-import { Link } from "react-router"; // 💡 Import Link
+import { Link } from "react-router"; 
 
 const SeekerDashboard = ({ data }) => {
   const { applications_count, interviews, offers, recently_applied, recommended_jobs } = data;
@@ -10,20 +10,21 @@ const SeekerDashboard = ({ data }) => {
     <div className="container mx-auto py-8 px-4">
       <h2 className="text-3xl font-bold text-green-700 mb-8">Job Seeker Dashboard</h2>
       
-      {/* 🎯 Stats Cards wrapped in Links */}
+      {/* 🎯 Updated Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
         {[
-          { to: "/dashboard/seeker/my-applications", icon: FiSend, title: "Total Applications", value: applications_count },
-          { to: "/dashboard/seeker/my-applications", icon: FiCalendar, title: "Interviews Scheduled", value: interviews },
-          { to: "/dashboard/seeker/my-applications", icon: FiCheckCircle, title: "Job Offers", value: offers },
-          { to: "/dashboard/jobs", icon: FiSearch, title: "Recommended Jobs", value: recommended_jobs?.length || 0 },
+          { to: "/dashboard/seeker/my-applications", icon: FiSend, title: "Total Applications", value: applications_count, color: "bg-green-100 text-green-700" },
+          { to: "/dashboard/seeker/my-applications", icon: FiCalendar, title: "Interviewed", value: interviews, color: "bg-blue-100 text-blue-700" },
+          { to: "/dashboard/seeker/my-applications", icon: FiCheckCircle, title: "Job Offers", value: offers, color: "bg-yellow-100 text-yellow-700" },
+          // 💡 NEW CARD: Points to the Status Overview
+          { to: "/dashboard/seeker/applications-status", icon: FiActivity, title: "Application Status", value: "Track", color: "bg-purple-100 text-purple-700" },
         ].map((item, idx) => (
           <Link
             key={idx}
             to={item.to}
             className="flex flex-col items-start p-6 bg-white rounded-xl shadow-md border border-gray-100 transition transform hover:scale-105 hover:shadow-xl w-full h-full"
           >
-            <div className="p-3 bg-green-100 rounded-lg text-green-700 mb-4">
+            <div className={`p-3 rounded-lg mb-4 ${item.color}`}>
               <item.icon size={24} />
             </div>
             <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
@@ -46,7 +47,6 @@ const SeekerDashboard = ({ data }) => {
             <ul className="space-y-3">
               {recently_applied.map((app) => (
                 <li key={app.id}>
-                  {/* 🎯 Wrap content in Link to make the entire box clickable */}
                   <Link 
                     to={`/jobs/${app.job_id}`} 
                     className="block p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200 border border-transparent hover:border-green-300 cursor-pointer"
@@ -80,7 +80,7 @@ const SeekerDashboard = ({ data }) => {
           )}
         </div>
 
-        {/* 🎯 Recommended Jobs Card with View Details Link */}
+        {/* 🎯 Recommended Jobs Card remains here for discovery */}
         <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
             <FiSearch className="mr-2 text-green-700" /> Recommended For You
@@ -97,9 +97,8 @@ const SeekerDashboard = ({ data }) => {
                       <p className="text-lg font-medium text-green-700">{job.title}</p>
                       <p className="text-sm text-gray-600">{job.company_name} - {job.location}</p>
                     </div>
-                    {/* View Details Button */}
                     <Link
-                      to={`/jobs/${job.id}`} // Adjusted to match your new dashboard route
+                      to={`/jobs/${job.id}`}
                       className="text-sm font-medium text-emerald-700 hover:text-emerald-900 transition flex items-center gap-1"
                     >
                       View Details →

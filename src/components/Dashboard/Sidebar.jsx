@@ -33,7 +33,7 @@ const Sidebar = () => {
     {
       to: "/Dashboard/seeker/applications-status",
       icon: FiActivity,
-      label: "My Applications",
+      label: "My Status",
     },
   ];
 
