@@ -43,7 +43,7 @@ const Applicants = () => {
 
                 if (!acc[jobId]) {
                     acc[jobId] = {
-                        // Matching your SimpleJobDetailSerializer exactly
+                        // Using company_name from your Serializer
                         company: app.job?.company_name || "Employer", 
                         title: app.job?.title || "Untitled Position",
                         location: app.job?.location || "N/A",
@@ -59,7 +59,7 @@ const Applicants = () => {
             setJobsData(grouped);
         } catch (err) {
             console.error("Failed to load data:", err);
-            setError("Failed to load data.");
+            setError("Failed to load applicant data.");
         } finally {
             setLoading(false);
         }
@@ -86,9 +86,9 @@ const Applicants = () => {
                 return updatedJobs;
             });
             
-            alert(`Updated to ${newStatus.toUpperCase()}`);
+            alert(`Status updated to ${newStatus.toUpperCase()}`);
         } catch (err) {
-            alert("Failed to update status.");
+            alert("Update failed.");
         } finally {
             setUpdatingAppId(null);
         }
@@ -104,7 +104,7 @@ const Applicants = () => {
         }
     };
 
-    if (loading) return <div className="p-10 text-center font-bold text-green-600">Loading Dashboard...</div>;
+    if (loading) return <div className="p-10 text-center font-bold text-green-600">Loading Applications...</div>;
     if (error) return <div className="p-10 text-center text-red-500 font-bold">{error}</div>;
 
     const firstGroup = Object.values(jobsData)[0];
@@ -112,12 +112,12 @@ const Applicants = () => {
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
-            <header className="mb-8 border-b pb-4">
+            <header className="mb-8 border-b border-slate-100 pb-5">
                 <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
                     {companyDisplayName}'s Job Applicants
                 </h2>
                 <p className="text-slate-500 font-medium">
-                    Tracking <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active job listings.
+                    Managing <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active job posts.
                 </p>
             </header>
 
@@ -125,6 +125,7 @@ const Applicants = () => {
                 {Object.entries(jobsData).map(([jobId, data]) => (
                     <div key={jobId} className="border rounded-2xl bg-white shadow-sm overflow-hidden border-slate-200">
                         
+                        {/* JOB TOGGLE HEADER */}
                         <button 
                             onClick={() => toggleJob(jobId)}
                             className={`w-full flex items-center justify-between p-5 text-left transition group ${
@@ -156,39 +157,47 @@ const Applicants = () => {
                             </div>
                         </button>
 
+                        {/* APPLICANTS TABLE */}
                         {expandedJobs[jobId] && (
-                            <div className="border-t bg-white p-5">
+                            <div className="border-t bg-white p-5 animate-in slide-in-from-top-1 duration-200">
+                                <div className="flex justify-between items-center mb-4 px-1">
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Applicant Details</h4>
+                                    <Link to={`/jobs/${jobId}`} className="text-xs text-green-600 font-bold hover:underline flex items-center gap-1">
+                                        <FiExternalLink /> View Post
+                                    </Link>
+                                </div>
+
                                 <div className="overflow-x-auto rounded-xl border border-slate-100">
                                     <table className="table w-full">
                                         <thead className="bg-slate-50 text-slate-500 uppercase text-[10px]">
                                             <tr>
-                                                <th className="py-4">Applicant Full Name</th>
-                                                <th>Applied Date</th>
-                                                <th>Status</th>
+                                                <th className="py-4">Applicant</th>
+                                                <th>Applied At</th>
+                                                <th>Decision</th>
                                                 <th className="text-right">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {data.applicants.map((app) => {
-                                                // 💡 ABSOLUTE FIX: Combine first and last name to ensure full name shows
-                                                const fullName = app.applicant?.full_name || 
-                                                                 `${app.applicant?.first_name || ""} ${app.applicant?.last_name || ""}`.trim() || 
-                                                                 "Applicant";
+                                                const u = app.applicant || {};
                                                 
-                                                const initials = app.applicant?.first_name?.[0] || fullName[0];
+                                                // 💡 Integrated your working logic here:
+                                                const displayName = u.first_name || u.last_name 
+                                                    ? `${u.first_name || ''} ${u.last_name || ''}`.trim() 
+                                                    : u.username || "System User";
 
                                                 return (
                                                     <tr key={app.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0">
                                                         <td>
                                                             <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold uppercase">
-                                                                    {initials}
+                                                                <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold uppercase shadow-sm">
+                                                                    {displayName[0]}
                                                                 </div>
                                                                 <div>
                                                                     <p className="font-bold text-slate-700 text-sm">
-                                                                        {fullName}
+                                                                        {displayName}
                                                                     </p>
-                                                                    <p className="text-xs text-slate-400 font-medium">{app.applicant?.email}</p>
+                                                                    <p className="text-xs text-slate-400 font-medium">{u.email}</p>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -209,6 +218,7 @@ const Applicants = () => {
                                                                         </option>
                                                                     ))}
                                                                 </select>
+                                                                {updatingAppId === app.id && <span className="loading loading-spinner loading-xs text-green-500"></span>}
                                                             </div>
                                                         </td>
                                                         <td className="text-right">
