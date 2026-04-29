@@ -9,7 +9,8 @@ import {
     FiCalendar, 
     FiExternalLink,
     FiCheckCircle,
-    FiMapPin
+    FiMapPin,
+    FiUser
 } from "react-icons/fi";
 
 const Applicants = () => {
@@ -37,13 +38,14 @@ const Applicants = () => {
             setStatusChoices(choicesRes.data);
             const allApps = appsRes.data.results || appsRes.data;
 
-            // Grouping logic
             const grouped = allApps.reduce((acc, app) => {
                 const jobId = app.job?.id;
                 if (!jobId) return acc;
+
                 if (!acc[jobId]) {
                     acc[jobId] = {
-                        company: app.job?.company_name || "Employer", 
+                        // 💡 Using your new Serializer field here!
+                        employerFullName: app.job_employer_name || "Employer",
                         title: app.job?.title || "Untitled Position",
                         location: app.job?.location || "N/A",
                         type: app.job?.employment_type || "N/A",
@@ -70,7 +72,6 @@ const Applicants = () => {
         setExpandedJobs(prev => ({ ...prev, [jobId]: !prev[jobId] }));
     };
 
-    // 🎯 FIXED STATUS CHANGE LOGIC
     const handleStatusChange = async (appId, jobId, newStatus) => {
         setUpdatingAppId(appId);
         try {
@@ -78,11 +79,11 @@ const Applicants = () => {
                 status: newStatus,
             });
 
-            // We must update the state by finding the jobId key first
             setJobsData(prev => {
                 const updatedJobs = { ...prev };
                 if (updatedJobs[jobId]) {
                     updatedJobs[jobId].applicants = updatedJobs[jobId].applicants.map(app => 
+                        // Update the status only, keeping nested applicant data intact
                         app.id === appId ? { ...app, status: response.data.status } : app
                     );
                 }
@@ -91,8 +92,7 @@ const Applicants = () => {
             
             alert(`Status updated to ${newStatus.toUpperCase()}`);
         } catch (err) {
-            console.error("Update failed", err);
-            alert("Failed to update status.");
+            alert("Update failed. Check if status is read-only in Django.");
         } finally {
             setUpdatingAppId(null);
         }
@@ -111,14 +111,18 @@ const Applicants = () => {
     if (loading) return <div className="p-10 text-center font-bold text-green-600">Loading Applications...</div>;
     if (error) return <div className="p-10 text-center text-red-500 font-bold">{error}</div>;
 
+    // Get the employer name from the first group found
+    const firstJobKey = Object.keys(jobsData)[0];
+    const displayEmployerName = jobsData[firstJobKey]?.employerFullName || "Employer";
+
     return (
         <div className="p-6 max-w-6xl mx-auto">
             <header className="mb-8 border-b border-slate-100 pb-5">
                 <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
-                    Job Applicants
+                    {displayEmployerName}'s Applicants
                 </h2>
                 <p className="text-slate-500 font-medium">
-                    Managing <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active job posts.
+                    Reviewing <span className="text-green-600 font-bold">{Object.keys(jobsData).length}</span> active job posts.
                 </p>
             </header>
 
@@ -138,46 +142,49 @@ const Applicants = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-xl text-slate-800">{data.title}</h3>
-                                    <div className="flex items-center gap-3 mt-1 text-sm text-slate-500 font-semibold">
-                                        <span className="text-green-600">{data.applicants.length} Candidates</span>
+                                    <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+                                        <span className="font-bold text-green-600 flex items-center gap-1">
+                                            <FiCheckCircle/> {data.applicants.length} Candidates
+                                        </span>
                                         <span>•</span>
-                                        <span>{data.type} • {data.remote}</span>
+                                        <span className="uppercase text-[10px] font-bold bg-slate-200 px-2 py-0.5 rounded text-slate-600">
+                                            {data.type} • {data.remote}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            {expandedJobs[jobId] ? <FiChevronDown size={24}/> : <FiChevronRight size={24}/>}
+                            {expandedJobs[jobId] ? <FiChevronDown size={24} className="text-green-600"/> : <FiChevronRight size={24} className="text-slate-300"/>}
                         </button>
 
                         {expandedJobs[jobId] && (
-                            <div className="border-t bg-white p-5 animate-in slide-in-from-top-1 duration-200">
+                            <div className="border-t bg-white p-5">
                                 <div className="overflow-x-auto rounded-xl border border-slate-100">
                                     <table className="table w-full">
                                         <thead className="bg-slate-50 text-slate-500 uppercase text-[10px]">
                                             <tr>
-                                                <th className="py-4">Applicant</th>
-                                                <th>Applied Date</th>
-                                                <th>Status</th>
+                                                <th className="py-4">Candidate</th>
+                                                <th>Applied At</th>
+                                                <th>Decision</th>
                                                 <th className="text-right">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {data.applicants.map((app) => {
                                                 const u = app.applicant || {};
-                                                
-                                                // 🎯 FULL NAME LOGIC (Matches ManageUsers exactly)
-                                                const displayName = u.first_name || u.last_name 
+                                                // Combine names manually for Candidate column
+                                                const candidateName = u.first_name || u.last_name 
                                                     ? `${u.first_name || ''} ${u.last_name || ''}`.trim() 
-                                                    : u.username || "System User";
+                                                    : u.username || "Applicant";
 
                                                 return (
                                                     <tr key={app.id} className="hover:bg-slate-50/50 border-b border-slate-50 last:border-0">
                                                         <td>
                                                             <div className="flex items-center gap-3 py-2">
                                                                 <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold uppercase">
-                                                                    {displayName[0]}
+                                                                    {candidateName[0]}
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-bold text-slate-700 text-sm">{displayName}</p>
+                                                                    <p className="font-bold text-slate-700 text-sm">{candidateName}</p>
                                                                     <p className="text-xs text-slate-400 font-medium">{u.email}</p>
                                                                 </div>
                                                             </div>
