@@ -27,7 +27,7 @@ const ManageJobs = () => {
         url = "/jobs/?all=true"; 
       } else if (user?.role === "employer") {
         // Employer fetches only their jobs
-        url = `/jobs/?employer_id=${user.id}`;
+        url = `/jobs/?employer=${user.id}`;
       } else {
         // Fallback or unhandled role
         setJobs([]);

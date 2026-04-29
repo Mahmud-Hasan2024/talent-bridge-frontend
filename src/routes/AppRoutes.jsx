@@ -101,13 +101,21 @@ function AppRoutes() {
 
         {/* Employer-only */}
         <Route
+          path="employer/jobs"
+          element={
+            <RoleGuard allowedRoles={["employer"]}>
+              <ManageJobs />
+            </RoleGuard>
+          }
+        />
+        {/* <Route
           path="employer/my-jobs"
           element={
             <RoleGuard allowedRoles={["employer"]}>
               <MyJobs />
             </RoleGuard>
           }
-        />
+        /> */}
         <Route
           path="employer/post-job"
           element={
