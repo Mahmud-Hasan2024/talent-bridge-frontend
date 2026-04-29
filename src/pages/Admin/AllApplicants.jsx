@@ -1,125 +1,163 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router"; 
-import authApiClient from "../../services/auth-api-client";
+import apiClient from "../../services/api-client";
 import useAuthContext from "../../hooks/useAuthContext";
+import { Link } from "react-router";
+import { FiChevronDown, FiChevronRight, FiUser, FiBriefcase, FiMapPin } from "react-icons/fi";
 
 const AllApplicants = () => {
-  const { authTokens, user } = useAuthContext();
-  const [applications, setApplications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const { authTokens, user } = useAuthContext();
+    const [jobsData, setJobsData] = useState({}); 
+    const [loading, setLoading] = useState(true);
+    const [expandedJobs, setExpandedJobs] = useState({});
 
-  useEffect(() => {
-    if (!authTokens?.access || user?.role !== 'admin') {
-      setError("Access denied. Only administrators can view all applications.");
-      setLoading(false);
-      return;
-    }
+    const fetchMasterData = async () => {
+        if (user?.role !== "admin") return;
+        setLoading(true);
+        try {
+            // Fetching applications to get the link between Job -> Applicant
+            const url = "/applications/?no_pagination=true";
+            const res = await apiClient.get(url, {
+                headers: { Authorization: `JWT ${authTokens.access}` },
+            });
 
-    const url = "/applications/?no_pagination=true";
+            const allApps = res.data.results || res.data;
 
-    setLoading(true);
-    authApiClient
-      .get(url) 
-      .then((res) => {
-        const data = res.data.results || res.data;
-        setApplications(data);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch all applicants:", err);
-        setError(
-          "Failed to load applicants. Check network or permissions."
-        );
-        setApplications([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [authTokens, user]);
+            // 💡 GROUPING LOGIC: Group by Job ID
+            const groupedByJob = allApps.reduce((acc, app) => {
+                const jobId = app.job?.id;
+                if (!acc[jobId]) {
+                    acc[jobId] = {
+                        title: app.job?.title || "Untitled Position",
+                        company: app.job_employer_name || app.job?.company_name || "N/A",
+                        location: app.job?.location || "Remote",
+                        applicants: []
+                    };
+                }
+                acc[jobId].applicants.push(app);
+                return acc;
+            }, {});
 
-  const getStatusClassName = (statusValue) => {
-    switch (statusValue) {
-      case "accepted":
-        return "badge-success";
-      case "rejected":
-        return "badge-error";
-      case "interviewed":
-        return "badge-warning";
-      case "offered":
-        return "badge-info";
-      default:
-        return "badge-ghost";
-    }
-  };
+            setJobsData(groupedByJob);
+        } catch (err) {
+            console.error("Master view fetch failed", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => { fetchMasterData(); }, [authTokens, user]);
 
-  // --- Render Logic ---
-  if (loading) return <div className="p-6 text-center">Loading all applicants...</div>;
-  if (error) return <div className="p-6 text-center text-red-600 font-bold">{error}</div>;
-  
-  // If not admin, explicitly show the error message from the useEffect check
-  if (user?.role !== 'admin') {
-    return <div className="p-6 text-center text-red-600 font-bold">Access denied. Only administrators can view all applications.</div>;
-  }
+    const toggleJob = (jobId) => {
+        setExpandedJobs(prev => ({ ...prev, [jobId]: !prev[jobId] }));
+    };
 
+    if (loading) return <div className="p-10 text-center">Loading Job Hierarchy...</div>;
 
-  return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-blue-700">
-        All Job Applicants ({applications.length})
-      </h2>
+    return (
+        <div className="p-6 max-w-6xl mx-auto">
+            <header className="mb-8">
+                <h2 className="text-3xl font-black text-slate-800">Job Applicant Manager</h2>
+                <p className="text-slate-500">Click any job to see its current applicants.</p>
+            </header>
 
-      {applications.length === 0 ? (
-        <p className="text-gray-500">No applications found.</p>
-      ) : (
-        <div className="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-100">
-          <table className="table table-zebra w-full">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Applicant</th>
-                <th>Email</th>
-                <th>Job Title</th>
-                <th>Employer</th>
-                <th>Status</th>
-                <th className="w-[150px]">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app, index) => (
-                <tr key={app.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    {app.applicant?.first_name} {app.applicant?.last_name}
-                  </td>
-                  <td>{app.applicant?.email}</td>
-                  <td>{app.job?.title || "N/A"}</td>
-                  <td>
-                    <div className="font-medium">{app.job_employer_name}</div>
-                    <div className="text-xs text-gray-400">{app.job?.company_name}</div>
-                  </td>
-                  <td>
-                    <span className={`badge ${getStatusClassName(app.status)} capitalize`}>
-                        {app.status}
-                    </span>
-                  </td>
-                  <td>
-                    <Link
-                      to={`/Dashboard/applications/${app.id}`} 
-                      className="btn btn-sm btn-primary text-white bg-blue-600 hover:bg-blue-700"
-                    >
-                      View Details
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            <div className="space-y-4">
+                {Object.entries(jobsData).map(([jobId, data]) => (
+                    <div key={jobId} className="border rounded-xl bg-white shadow-sm overflow-hidden transition-all duration-200">
+                        
+                        {/* 🛠️ JOB TOGGLE HEADER */}
+                        <button 
+                            onClick={() => toggleJob(jobId)}
+                            className={`w-full flex items-center justify-between p-5 text-left transition ${
+                                expandedJobs[jobId] ? "bg-blue-50" : "bg-white hover:bg-gray-50"
+                            }`}
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className={`p-2 rounded-lg ${expandedJobs[jobId] ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-500"}`}>
+                                    <FiBriefcase size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg text-slate-800 leading-tight">
+                                        {data.title}
+                                    </h3>
+                                    <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+                                        <span className="font-semibold text-blue-600">{data.company}</span>
+                                        <span className="flex items-center gap-1"><FiMapPin size={12}/> {data.location}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-4">
+                                <div className="hidden sm:block text-right">
+                                    <span className="text-xs font-bold uppercase text-slate-400">Applicants</span>
+                                    <p className="text-lg font-black text-slate-700">{data.applicants.length}</p>
+                                </div>
+                                {expandedJobs[jobId] ? <FiChevronDown size={24} className="text-blue-600"/> : <FiChevronRight size={24} className="text-gray-300"/>}
+                            </div>
+                        </button>
+
+                        {/* 📋 APPLICANTS TABLE (HIDDEN BY DEFAULT) */}
+                        {expandedJobs[jobId] && (
+                            <div className="border-t bg-white p-4">
+                                <div className="flex justify-between items-center mb-4 px-2">
+                                    <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Candidate List</h4>
+                                    <Link to={`/dashboard/admin/jobs/${jobId}/edit`} className="text-xs text-blue-600 font-bold hover:underline">
+                                        Edit Job Details
+                                    </Link>
+                                </div>
+
+                                <div className="overflow-x-auto rounded-lg border border-gray-100">
+                                    <table className="table table-zebra w-full">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="text-slate-600">Name</th>
+                                                <th className="text-slate-600">Email</th>
+                                                <th className="text-slate-600">Status</th>
+                                                <th className="text-slate-600">Date Applied</th>
+                                                <th className="text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {data.applicants.map((app) => (
+                                                <tr key={app.id} className="hover:bg-blue-50/50">
+                                                    <td>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                                                                {app.applicant?.first_name?.[0]}{app.applicant?.last_name?.[0]}
+                                                            </div>
+                                                            <span className="font-semibold text-slate-700">
+                                                                {app.applicant?.first_name} {app.applicant?.last_name}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="text-sm text-slate-500">{app.applicant?.email}</td>
+                                                    <td>
+                                                        <span className="badge badge-sm badge-outline capitalize font-bold text-[10px]">
+                                                            {app.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="text-xs text-slate-400">
+                                                        {new Date(app.applied_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    </td>
+                                                    <td className="text-right">
+                                                        <Link 
+                                                            to={`/Dashboard/applications/${app.id}`} 
+                                                            className="btn btn-ghost btn-xs text-blue-600 font-bold"
+                                                        >
+                                                            View Profile
+                                                        </Link>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default AllApplicants;
