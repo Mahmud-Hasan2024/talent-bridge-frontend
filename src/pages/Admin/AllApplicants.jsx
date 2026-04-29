@@ -95,7 +95,10 @@ const AllApplicants = () => {
                   </td>
                   <td>{app.applicant?.email}</td>
                   <td>{app.job?.title || "N/A"}</td>
-                  <td>{app.job_employer_name || app.job?.employer_name || "N/A"}</td>
+                  <td>
+                    <div className="font-medium">{app.job_employer_name}</div>
+                    <div className="text-xs text-gray-400">{app.job?.company_name}</div>
+                  </td>
                   <td>
                     <span className={`badge ${getStatusClassName(app.status)} capitalize`}>
                         {app.status}

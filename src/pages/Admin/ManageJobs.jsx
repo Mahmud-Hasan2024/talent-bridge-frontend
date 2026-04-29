@@ -116,7 +116,10 @@ const ManageJobs = () => {
                 <tr key={job.id}>
                   <td>{job.title}</td>
                   {user?.role === "admin" && (
-                     <td>{job.company_name || job.employer_name || `ID: ${job.employer}`}</td>
+                    <td>
+                      <div className="font-bold">{job.employer_name}</div>
+                      <div className="text-xs text-gray-500">{job.company_name}</div>
+                    </td>
                   )}
                   <td>{job.category_name || job.category?.name}</td>
                   <td>{job.location}</td>
