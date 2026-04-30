@@ -79,20 +79,36 @@ const Hero = () => {
 
           <div className="space-x-4">
             {role === "employer" && (
-              <Link
-                to="/Dashboard/employer/post-job"
-                className="px-6 py-2 rounded-lg font-semibold bg-white hover:bg-gray-100 text-emerald-700 transition"
-              >
-                Post a Job
-              </Link>
+              <>
+                <Link
+                  to="/Dashboard"
+                  className="px-6 py-2 rounded-lg font-semibold bg-lime-400 hover:bg-lime-500 text-gray-900 transition"
+                >
+                  Go to Dashboard
+                </Link>
+                <Link
+                  to="/Dashboard/employer/post-job"
+                  className="px-6 py-2 rounded-lg font-semibold bg-white hover:bg-gray-100 text-emerald-700 transition"
+                >
+                  Post a Job
+                </Link>
+              </>
             )}
             {role === "seeker" && (
-              <Link
-                to="/jobs"
-                className="px-6 py-2 rounded-lg font-semibold bg-lime-400 hover:bg-lime-500 text-gray-900 transition"
-              >
-                Find Jobs
-              </Link>
+              <>
+                <Link
+                  to="/Dashboard"
+                  className="px-6 py-2 rounded-lg font-semibold bg-lime-400 hover:bg-lime-500 text-gray-900 transition"
+                >
+                  Go to Dashboard
+                </Link>
+                <Link
+                  to="/jobs"
+                  className="px-6 py-2 rounded-lg font-semibold bg-white hover:bg-gray-100 text-emerald-700 transition"
+                >
+                  Find Jobs
+                </Link>
+              </>
             )}
             {role === "admin" && (
               <Link
@@ -105,13 +121,13 @@ const Hero = () => {
             {role === "guest" && (
               <>
                 <Link
-                  to="/jobs"
+                  to="/login"
                   className="px-6 py-2 rounded-lg font-semibold bg-lime-400 hover:bg-lime-500 text-gray-900 transition"
                 >
                   Find Jobs
                 </Link>
                 <Link
-                  to="/register"
+                  to="/login"
                   className="px-6 py-2 rounded-lg font-semibold bg-white hover:bg-gray-100 text-emerald-700 transition"
                 >
                   Post a Job
