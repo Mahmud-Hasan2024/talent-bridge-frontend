@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import apiClient from "../../services/api-client";
 import useAuthContext from "../../hooks/useAuthContext";
 import { Link } from "react-router";
-import { FiExternalLink } from "react-icons/fi"; // Added an icon for better UX
+import { FiExternalLink } from "react-icons/fi";
 
 const MyJobs = () => {
     const { user, authTokens } = useAuthContext();
@@ -15,26 +15,19 @@ const MyJobs = () => {
     useEffect(() => {
         if (!authTokens?.access || !user?.id) {
             setLoading(false);
-            setError(null);
             return;
         }
 
         const fetchJobs = async () => {
             setLoading(true);
-            setError(null);
-
-            const employerFilter = `employer=${user.id}`;
-            const paginationBypass = `no_pagination=true`;
-            const url = `/jobs/?${employerFilter}&${paginationBypass}`;
-
             try {
+                const url = `/jobs/?employer=${user.id}&no_pagination=true`;
                 const res = await apiClient.get(url, {
                     headers: { Authorization: `JWT ${authTokens.access}` },
                 });
                 const data = res.data.results || res.data;
                 setJobs(data);
             } catch (err) {
-                console.error("Error fetching my jobs:", err.response?.data || err);
                 setError("Failed to load your posted jobs.");
             } finally {
                 setLoading(false);
@@ -44,38 +37,32 @@ const MyJobs = () => {
         fetchJobs();
     }, [authTokens, user]);
 
-
     const handleDeleteJob = async (jobId) => {
-        if (!window.confirm("Are you sure you want to permanently delete this job?")) {
-          return;
-        }
-    
+        if (!window.confirm("Are you sure you want to permanently delete this job?")) return;
         setIsDeleting(true);
-        setDeleteError(null);
-    
         try {
-          await apiClient.delete(`/jobs/${jobId}/`, {
-            headers: { Authorization: `JWT ${authTokens.access}` },
-          });
-          setJobs(jobs.filter(job => job.id !== jobId));
-          alert(`Job successfully deleted.`);
+            await apiClient.delete(`/jobs/${jobId}/`, {
+                headers: { Authorization: `JWT ${authTokens.access}` },
+            });
+            setJobs(jobs.filter(job => job.id !== jobId));
+            alert(`Job successfully deleted.`);
         } catch (err) {
-          setDeleteError("Failed to delete the job.");
+            setDeleteError("Failed to delete the job.");
         } finally {
-          setIsDeleting(false);
+            setIsDeleting(false);
         }
-      };
+    };
 
     if (loading) return <div className="text-center py-8">Loading your jobs...</div>;
     if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold text-green-700">
+        <div className="p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-green-700">
                     {user?.first_name || 'My'} Posted Jobs ({jobs.length})
                 </h2>
-                <Link to="/Dashboard/employer/post-job" className="btn btn-success text-white">
+                <Link to="/Dashboard/employer/post-job" className="btn btn-success text-white w-full sm:w-auto">
                     Post New Job
                 </Link>
             </div>
@@ -87,53 +74,25 @@ const MyJobs = () => {
             )}
 
             {jobs.length === 0 ? (
-                <p className="text-gray-500">
-                    No jobs posted yet.{" "}
-                    <Link to="/Dashboard/employer/post-job" className="text-green-600 hover:underline">
-                        Post one now!
-                    </Link>
-                </p>
+                <p className="text-gray-500">No jobs posted yet. <Link to="/Dashboard/employer/post-job" className="text-green-600 hover:underline">Post one now!</Link></p>
             ) : (
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {jobs.map((job) => (
-                        <div
-                            key={job.id}
-                            className="bg-white p-5 rounded-xl shadow-lg border border-gray-100 transition duration-300 hover:shadow-xl flex flex-col justify-between"
-                        >
-                            <div>
-                                <div className="flex justify-between items-start">
-                                    <h3 className="font-bold text-xl text-gray-800">{job.title}</h3>
-                                    {/* 💡 VIEW POST BUTTON (Public Link) */}
-                                    <Link 
-                                        to={`/jobs/${job.id}`} 
-                                        className="text-blue-500 hover:text-blue-700 p-1"
-                                        title="View public post"
-                                    >
+                        <div key={job.id} className="bg-white p-5 rounded-xl shadow-lg border border-slate-100 flex flex-col justify-between hover:shadow-xl transition-shadow">
+                            <div className="min-w-0">
+                                <div className="flex justify-between items-start gap-2">
+                                    <h3 className="font-bold text-lg md:text-xl text-slate-800 truncate">{job.title}</h3>
+                                    <Link to={`/jobs/${job.id}`} className="text-blue-500 shrink-0 p-1" title="View public post">
                                         <FiExternalLink size={20} />
                                     </Link>
                                 </div>
-                                <p className="text-gray-600 mb-3">{job.location}</p>
+                                <p className="text-slate-500 mb-3 font-medium">{job.location}</p>
                             </div>
 
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                <Link
-                                    to={`/dashboard/employer/jobs/${job.id}/edit`}
-                                    className="btn btn-outline btn-sm"
-                                >
-                                    Edit
-                                </Link>
-                                <Link
-                                    to={`/dashboard/employer/applicants?job_id=${job.id}`}
-                                    className="btn bg-green-600 hover:bg-green-700 btn-sm text-white"
-                                >
-                                    View Applicants
-                                </Link>
-
-                                <button
-                                    onClick={() => handleDeleteJob(job.id)}
-                                    className="btn btn-error btn-sm text-white"
-                                    disabled={isDeleting}
-                                >
+                            <div className="mt-6 grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                                <Link to={`/dashboard/employer/jobs/${job.id}/edit`} className="btn btn-outline btn-sm font-bold">Edit</Link>
+                                <Link to={`/dashboard/employer/applicants?job_id=${job.id}`} className="btn bg-green-600 hover:bg-green-700 border-green-600 btn-sm text-white font-bold">Applicants</Link>
+                                <button onClick={() => handleDeleteJob(job.id)} className="btn btn-error btn-sm text-white font-bold col-span-2 sm:col-auto" disabled={isDeleting}>
                                     {isDeleting ? "Deleting..." : "Delete"}
                                 </button>
                             </div>
