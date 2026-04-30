@@ -10,7 +10,6 @@ const AllJobs = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    // 💡 Toggle State for Companies
     const [expandedCompanies, setExpandedCompanies] = useState({});
 
     const fetchAllJobs = async () => {
@@ -29,9 +28,7 @@ const AllJobs = () => {
 
             const data = res.data.results || res.data;
 
-            // 💡 LOGIC FIX: Group by employer_name (Full Name) and show company name
             const groups = data.reduce((acc, job) => {
-                // We use employer_name for the full name from backend
                 const key = job.employer_name || job.company_name || "Unknown Employer";
                 if (!acc[key]) acc[key] = [];
                 acc[key].push(job);
@@ -51,7 +48,6 @@ const AllJobs = () => {
         fetchAllJobs();
     }, [authTokens, user]);
 
-    // 💡 Toggle function
     const toggleCompany = (company) => {
         setExpandedCompanies(prev => ({ ...prev, [company]: !prev[company] }));
     };
@@ -76,68 +72,79 @@ const AllJobs = () => {
     if (error) return <div className="text-center py-10 text-red-600 font-bold">{error}</div>;
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
-            <h2 className="text-3xl font-black mb-8 text-blue-900 border-b pb-4">
+        <div className="p-4 md:p-6 max-w-6xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-black mb-8 text-blue-900 border-b pb-4">
                 Global Job Management
             </h2>
 
             {Object.keys(groupedJobs).length === 0 ? (
-                <p className="text-gray-500">No jobs exist in the system.</p>
+                <p className="text-slate-500">No jobs exist in the system.</p>
             ) : (
                 Object.entries(groupedJobs).map(([employerName, jobs]) => (
                     <div key={employerName} className="mb-4 border rounded-xl overflow-hidden bg-white shadow-sm">
                         
-                        {/* 🏢 TOGGLE HEADER: EMPLOYER FULL NAME */}
+                        {/* 🏢 FIXED TOGGLE HEADER: MOBILE RESPONSIVE */}
                         <button 
                             onClick={() => toggleCompany(employerName)}
-                            className={`w-full flex items-center justify-between p-4 transition-colors ${
-                                expandedCompanies[employerName] ? "bg-blue-600 text-white" : "bg-gray-50 hover:bg-gray-100 text-gray-700"
+                            className={`w-full flex items-center justify-between p-4 transition-colors gap-3 ${
+                                expandedCompanies[employerName] ? "bg-blue-600 text-white" : "bg-slate-50 hover:bg-slate-100 text-slate-700"
                             }`}
                         >
-                            <div className="flex items-center gap-3">
-                                {expandedCompanies[employerName] ? <FiChevronDown /> : <FiChevronRight />}
-                                <span className="text-lg font-bold uppercase tracking-tight">
-                                    {employerName} 
-                                    <span className={`ml-3 text-xs font-normal ${expandedCompanies[employerName] ? "text-blue-100" : "text-gray-400"}`}>
-                                        ({jobs[0]?.company_name})
+                            <div className="flex items-start md:items-center gap-3 text-left overflow-hidden">
+                                {/* Fixed Icon alignment */}
+                                <div className="mt-1 md:mt-0">
+                                    {expandedCompanies[employerName] ? <FiChevronDown size={20} /> : <FiChevronRight size={20} />}
+                                </div>
+                                
+                                <div className="flex flex-col md:flex-row md:items-baseline md:gap-3 overflow-hidden">
+                                    <span className="text-sm md:text-lg font-bold uppercase tracking-tight truncate">
+                                        {employerName}
                                     </span>
-                                </span>
+                                    <span className={`text-[10px] md:text-xs font-semibold truncate ${expandedCompanies[employerName] ? "text-blue-100" : "text-slate-500"}`}>
+                                        ({jobs[0]?.company_name || "N/A"})
+                                    </span>
+                                </div>
                             </div>
-                            <span className={`badge ${expandedCompanies[employerName] ? "badge-outline text-white" : "badge-ghost"}`}>
-                                {jobs.length} Jobs
+
+                            {/* Badge stays right-aligned and doesn't shrink */}
+                            <span className={`badge badge-sm md:badge-md shrink-0 ${expandedCompanies[employerName] ? "badge-outline text-white" : "badge-ghost"}`}>
+                                {jobs.length} <span className="hidden xs:inline ml-1">Jobs</span>
                             </span>
                         </button>
 
-                        {/* 📋 COLLAPSIBLE CONTENT: JOBS GRID */}
+                        {/* 📋 COLLAPSIBLE CONTENT */}
                         {expandedCompanies[employerName] && (
-                            <div className="p-4 bg-gray-50 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="p-4 bg-slate-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {jobs.map((job) => (
                                     <div
                                         key={job.id}
-                                        className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-blue-400 transition-all flex flex-col justify-between"
+                                        className="bg-white p-4 rounded-lg shadow-sm border border-slate-200 hover:border-blue-400 transition-all flex flex-col justify-between h-full"
                                     >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div>
-                                                <h4 className="font-bold text-gray-800 flex items-center gap-2">
-                                                    <FiBriefcase className="text-blue-500" size={14}/> {job.title}
+                                        <div className="flex justify-between items-start mb-4 gap-2">
+                                            <div className="overflow-hidden">
+                                                <h4 className="font-bold text-slate-800 flex items-center gap-2 text-sm md:text-base leading-tight">
+                                                    <FiBriefcase className="text-blue-500 shrink-0" size={14}/> 
+                                                    <span className="truncate">{job.title}</span>
                                                 </h4>
-                                                <p className="text-xs text-gray-500 mt-1">{job.location}</p>
+                                                <p className="text-[11px] md:text-xs text-slate-500 mt-1 font-medium italic">
+                                                    {job.location}
+                                                </p>
                                             </div>
                                             <Link 
                                                 to={`/jobs/${job.id}`} 
-                                                className="text-blue-400 hover:text-blue-600"
+                                                className="text-blue-400 hover:text-blue-600 shrink-0 p-1"
                                                 title="View Post"
                                             >
-                                                <FiExternalLink size={16} />
+                                                <FiExternalLink size={18} />
                                             </Link>
                                         </div>
 
-                                        <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t">
+                                        <div className="flex flex-wrap gap-2 mt-auto pt-3 border-t border-slate-100">
                                             <Link
                                                 to={`/dashboard/admin/jobs/${job.id}/edit`}
-                                                className="btn btn-ghost btn-xs border border-gray-200 hover:bg-blue-50"
+                                                className="btn btn-ghost btn-xs border border-slate-200 hover:bg-blue-50"
                                             >
-                                                <FiEdit /> Edit
+                                                <FiEdit /> <span className="hidden sm:inline">Edit</span>
                                             </Link>
                                             <Link
                                                 to={`/dashboard/admin/applicants?job_id=${job.id}`}
