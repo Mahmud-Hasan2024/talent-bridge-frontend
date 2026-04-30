@@ -100,14 +100,14 @@ function AppRoutes() {
               </RoleGuard>
             }
           />
-        <Route
+        {/* <Route
           path="seeker/my-applications"
           element={
             <RoleGuard allowedRoles={["seeker"]}>
               <MyApplications />
             </RoleGuard>
           }
-        />
+        /> */}
         <Route
           path="seeker/applications-status"
           element={

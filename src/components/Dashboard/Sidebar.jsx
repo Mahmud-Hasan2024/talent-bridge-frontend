@@ -7,7 +7,7 @@ import {
   FiUsers,
   FiHome,
   FiSend,
-  FiActivity,
+  // FiActivity,
 } from "react-icons/fi";
 import { GiSuitcase } from "react-icons/gi";
 import { Link, useLocation } from "react-router";
@@ -25,14 +25,14 @@ const Sidebar = () => {
     { to: "/Dashboard", icon: FiBarChart2, label: "Dashboard" },
     { to: "/Dashboard/jobs", icon: FiBriefcase, label: "Browse Jobs" },
     { to: "/Dashboard/job-categories", icon: FiTag, label: "Categories" },
-    {
-      to: "/Dashboard/seeker/my-applications",
-      icon: FiSend,
-      label: "My Applications",
-    },
+    // {
+    //   to: "/Dashboard/seeker/my-applications",
+    //   icon: FiSend,
+    //   label: "My Applications",
+    // },
     {
       to: "/Dashboard/seeker/applications-status",
-      icon: FiActivity,
+      icon: FiSend,
       label: "My Status",
     },
   ];

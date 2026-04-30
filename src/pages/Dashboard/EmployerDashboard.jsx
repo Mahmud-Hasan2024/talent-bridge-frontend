@@ -71,7 +71,7 @@ const EmployerDashboard = ({ data }) => {
                       </div>
                       <div className="w-full sm:w-auto shrink-0">
                         <span className="inline-flex items-center text-[11px] font-black uppercase tracking-tighter text-emerald-700 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm w-full sm:w-auto justify-center">
-                          View Results →
+                          View Applicants →
                         </span>
                       </div>
                     </div>

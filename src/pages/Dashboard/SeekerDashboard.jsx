@@ -11,12 +11,12 @@ const SeekerDashboard = ({ data }) => {
       <h2 className="text-3xl font-bold text-green-700 mb-8">Job Seeker Dashboard</h2>
       
       {/* 🎯 Updated Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3 mb-10">
         {[
-          { to: "/dashboard/seeker/my-applications", icon: FiSend, title: "Total Applications", value: applications_count, color: "bg-green-100 text-green-700" },
-          { to: "/dashboard/seeker/my-applications", icon: FiCalendar, title: "Interviewed", value: interviews, color: "bg-blue-100 text-blue-700" },
-          { to: "/dashboard/seeker/my-applications", icon: FiCheckCircle, title: "Job Offers", value: offers, color: "bg-yellow-100 text-yellow-700" },
-          { to: "/dashboard/seeker/applications-status", icon: FiActivity, title: "Application Status", value: applications_count, color: "bg-purple-100 text-purple-700" },
+          { to: "/dashboard/seeker/applications-status", icon: FiSend, title: "Total Applications", value: applications_count, color: "bg-green-100 text-green-700" },
+          { to: "/dashboard/seeker/applications-status", icon: FiCalendar, title: "Interviewed", value: interviews, color: "bg-blue-100 text-blue-700" },
+          { to: "/dashboard/seeker/applications-status", icon: FiCheckCircle, title: "Job Offers", value: offers, color: "bg-yellow-100 text-yellow-700" },
+          // { to: "/dashboard/seeker/applications-status", icon: FiActivity, title: "Application Status", value: applications_count, color: "bg-purple-100 text-purple-700" },
         ].map((item, idx) => (
           <Link
             key={idx}
