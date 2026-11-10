@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import useAuth from "../hooks/useAuth";
+import useAuthContext from "../hooks/useAuthContext";
 import ProfileForm from "../components/Dashboard/Profile/ProfileForm";
 import PasswordChangeForm from "../components/Dashboard/Profile/PasswordChangeForm";
 import ProfileButtons from "../components/Dashboard/Profile/ProfileButtons";
@@ -9,9 +9,10 @@ import { UserCog } from "lucide-react";
 
 const Profile = () => {
   const { user, loadingAuth, errorMsg, updateUserProfile, changePassword } =
-    useAuth();
+    useAuthContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordSectionOpen, setIsPasswordSectionOpen] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const {
     register,
@@ -35,7 +36,6 @@ const Profile = () => {
     mode: "onSubmit",
   });
 
-  // Populate form with user data
   useEffect(() => {
     if (!loadingAuth && user) {
       reset({
@@ -49,7 +49,6 @@ const Profile = () => {
     }
   }, [user, loadingAuth, reset, clearErrors]);
 
-  // Clear errors when exiting edit mode
   useEffect(() => {
     if (!isEditing) {
       clearErrors();
@@ -58,16 +57,15 @@ const Profile = () => {
   }, [isEditing, clearErrors]);
 
   const onSubmit = async (data) => {
+    setSuccessMsg("");
     try {
-      // Update profile
-      await updateUserProfile({
+      const res = await updateUserProfile({
         first_name: data.first_name,
         last_name: data.last_name,
         address: data.address,
         phone_number: data.phone_number,
       });
 
-      // Change password if section open
       if (isPasswordSectionOpen && data.current_password && data.new_password) {
         if (data.new_password !== data.confirm_new_password) return;
         await changePassword({
@@ -80,7 +78,10 @@ const Profile = () => {
         setValue("confirm_new_password", "");
       }
 
-      setIsEditing(false);
+      if (res?.success) {
+        setSuccessMsg("Profile updated successfully!");
+        setIsEditing(false);
+      }
     } catch (error) {
       console.error("Profile update error:", error);
     }
@@ -88,31 +89,33 @@ const Profile = () => {
 
   if (loadingAuth) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-base-200">
-        <span className="loading loading-spinner loading-lg text-green-500"></span>
-        <p className="ml-2 text-gray-700">Loading profile data...</p>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <span className="loading loading-spinner loading-lg text-emerald-500"></span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-base-200 py-12 flex items-center justify-center">
-      <div className="card w-full max-w-3xl mx-auto bg-base-100 shadow-2xl rounded-xl border border-green-300">
-        <div className="card-body p-8">
+    <div className="py-6 flex items-center justify-center">
+      <div className="card w-full max-w-3xl mx-auto bg-base-100 shadow-xl rounded-2xl border border-base-300">
+        <div className="card-body p-6 md:p-8">
           {errorMsg && <ErroAlert error={errorMsg} />}
-          <h2 className="card-title text-4xl font-extrabold text-green-700 mb-6 flex items-center justify-center gap-3">
-            <UserCog size={36} /> Manage Your Profile
+          {successMsg && (
+            <div className="alert alert-success text-white font-semibold">
+              {successMsg}
+            </div>
+          )}
+          <h2 className="card-title text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-6 flex items-center justify-center gap-3">
+            <UserCog size={32} /> Manage Your Profile
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Profile Fields */}
             <ProfileForm
               register={register}
               errors={errors}
               isEditing={isEditing}
             />
 
-            {/* Password Change */}
             <PasswordChangeForm
               register={register}
               errors={errors}
@@ -122,7 +125,6 @@ const Profile = () => {
               setIsPasswordSectionOpen={setIsPasswordSectionOpen}
             />
 
-            {/* Buttons */}
             <ProfileButtons
               isEditing={isEditing}
               setIsEditing={setIsEditing}
@@ -130,9 +132,8 @@ const Profile = () => {
             />
           </form>
 
-          {/* User Role */}
           <div className="mt-6 text-center">
-            <span className="badge badge-outline badge-lg text-green-700">
+            <span className="badge badge-outline badge-lg text-emerald-600 dark:text-emerald-400 capitalize font-semibold">
               Role: {user?.role || "Job Seeker"}
             </span>
           </div>

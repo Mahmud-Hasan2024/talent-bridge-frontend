@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router"; // Important for catching the hash
+import { useLocation } from "react-router";
 import JobList from "./JobList";
 import useFetchCategories from "../hooks/useFetchCategories";
 import apiClient from "../services/api-client";
@@ -17,10 +17,10 @@ const CategoryPage = () => {
         const data = await Promise.all(
           categories.map(async (cat) => {
             const jobsRes = await apiClient.get(
-              `/jobs/?category_id=${cat.id}&is_active=true`
+              `/jobs/?category_id=${cat.id}&is_active=true`,
             );
-            return { ...cat, jobs: jobsRes.data.results };
-          })
+            return { ...cat, jobs: jobsRes.data.results || jobsRes.data || [] };
+          }),
         );
         setCategoriesWithJobs(data);
       } catch (err) {
@@ -32,16 +32,16 @@ const CategoryPage = () => {
 
     if (categories.length > 0) {
       fetchJobsForCategories();
+    } else {
+      setLoading(false);
     }
   }, [categories]);
 
-  // Handle auto-scroll logic
   useEffect(() => {
     if (!loading && location.hash) {
       const id = location.hash.replace("#", "");
       const element = document.getElementById(id);
       if (element) {
-        // Use a slight timeout to ensure the DOM has fully painted
         setTimeout(() => {
           element.scrollIntoView({ behavior: "smooth" });
         }, 100);
@@ -58,34 +58,33 @@ const CategoryPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-extrabold text-emerald-700 text-center mb-12">
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <h1 className="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 text-center mb-12">
         Job Categories 🌱
       </h1>
 
       {categoriesWithJobs.map((category) => (
-        /* Added id and scroll-mt-24 to offset for sticky navbars */
-        <div 
-          key={category.id} 
-          id={`category-${category.id}`} 
+        <div
+          key={category.id}
+          id={`category-${category.id}`}
           className="mb-16 scroll-mt-24"
         >
-          {/* Category Header */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-emerald-700">
+          <div className="mb-6 border-b border-base-300 pb-3">
+            <h2 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {category.name}
             </h2>
             {category.description && (
-              <p className="text-gray-600 mt-1">{category.description}</p>
+              <p className="text-base-content/70 mt-1">
+                {category.description}
+              </p>
             )}
           </div>
 
-          {/* Jobs under this category */}
           {category.jobs.length > 0 ? (
             <JobList jobs={category.jobs} loading={false} />
           ) : (
-            <p className="text-gray-500 font-medium">
-              No jobs available in this category.
+            <p className="text-base-content/50 font-medium italic">
+              No jobs available in this category right now.
             </p>
           )}
         </div>

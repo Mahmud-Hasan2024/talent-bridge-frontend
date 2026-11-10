@@ -17,21 +17,24 @@ const FeaturedJob = () => {
     setLoading(true);
     apiClient
       .get("/jobs/?featured=true")
-      .then((res) => setJobs(res.data.results))
+      .then((res) => {
+        const list = res.data.results || res.data || [];
+        setJobs(list);
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <section className="py-16 bg-slate-100">
-      <div className="container mx-auto px-4 md:px-8">
+    <section className="py-16 bg-base-100">
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
         <div className="flex justify-between items-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-base-content">
             🌟 Featured Jobs
           </h2>
           <Link
             to="/jobs"
-            className="inline-block px-5 py-2 rounded-full font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition"
+            className="btn btn-sm bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-full px-6"
           >
             See All Jobs
           </Link>
@@ -43,12 +46,10 @@ const FeaturedJob = () => {
           </div>
         )}
 
-        {error && (
-          <p className="text-center text-red-600 mt-6">Error: {error}</p>
-        )}
+        {error && <p className="text-center text-error mt-6">Error: {error}</p>}
 
         {!loading && !error && jobs.length === 0 && (
-          <p className="text-center text-gray-500 mt-6">
+          <p className="text-center text-base-content/60 mt-6">
             No Featured Jobs Available
           </p>
         )}
@@ -56,18 +57,18 @@ const FeaturedJob = () => {
         {!loading && !error && jobs.length > 0 && (
           <Swiper
             modules={[Navigation, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={24}
             slidesPerView={1}
             breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 30 },
-              1024: { slidesPerView: 3, spaceBetween: 40 },
+              640: { slidesPerView: 2, spaceBetween: 24 },
+              1024: { slidesPerView: 3, spaceBetween: 30 },
             }}
             navigation
             autoplay={{ delay: 4000, disableOnInteraction: false }}
-            className="mt-4"
+            className="mt-4 pb-4"
           >
             {jobs.map((job) => (
-              <SwiperSlide key={job.id} className="flex justify-center">
+              <SwiperSlide key={job.id} className="h-auto flex">
                 <JobItem job={job} />
               </SwiperSlide>
             ))}

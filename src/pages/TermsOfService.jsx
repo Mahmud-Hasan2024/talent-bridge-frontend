@@ -1,82 +1,69 @@
 const TermsOfService = () => {
-  const COLORS = {
-    primaryGreen: '#388E3C',
-    secondaryGreen: '#A5D6A7',
-    darkText: '#212121',
-    lightBackground: '#f7fcf7',
-    white: '#FFFFFF',
-  };
-  
-  const containerStyle = {
-    maxWidth: '1000px',
-    margin: '0 auto',
-    padding: '40px 20px',
-    color: COLORS.darkText,
-    fontFamily: 'Arial, sans-serif',
-    lineHeight: 1.6
-  };
-
-  const headingStyle = {
-    color: COLORS.primaryGreen,
-    fontSize: '2.5em',
-    fontWeight: 700,
-    marginBottom: '0.5em',
-    paddingBottom: '10px',
-    borderBottom: `3px solid ${COLORS.secondaryGreen}`,
-  };
-
-  const subHeadingStyle = {
-    color: COLORS.primaryGreen,
-    fontSize: '1.8em',
-    marginTop: '2em',
-    marginBottom: '0.8em',
-  };
-  
-  const h3Style = {
-      color: COLORS.primaryGreen, 
-      fontSize: '1.4em'
-  };
-
-  const paragraphStyle = {
-    fontSize: '1.1em',
-    marginBottom: '1em',
-  };
-
   return (
-    <div style={containerStyle}>
-      <h1 style={headingStyle}>⚖️ Terms of Service</h1>
-      <p style={paragraphStyle}><strong>Last Updated:</strong> November 20, 2025</p>
-      <p style={paragraphStyle}>
-        Welcome to **Talent Bridge**. By using our service, you agree to be bound by these Terms.
-      </p>
+    <div className="max-w-4xl mx-auto px-6 py-14 text-base-content">
+      <div className="border-b border-base-300 pb-6 mb-8">
+        <h1 className="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-2">
+          ⚖️ Terms of Service
+        </h1>
+        <p className="text-sm text-base-content/60">
+          <strong>Last Updated:</strong> November 20, 2025
+        </p>
+      </div>
 
-      <div style={{ borderTop: `1px solid ${COLORS.secondaryGreen}`, margin: '30px 0' }} />
+      <div className="space-y-8 leading-relaxed text-base-content/80">
+        <p className="text-lg">
+          Welcome to{" "}
+          <strong className="text-base-content">Talent Bridge</strong>. By using
+          our service, you agree to be bound by these Terms.
+        </p>
 
-      <h2 style={subHeadingStyle}>1. Acceptance and Agreement</h2>
-      <p style={paragraphStyle}>
-        Your access to and use of the Service is conditioned upon your acceptance of and compliance with these Terms. If you disagree with any part, you must not use the Service.
-      </p>
+        <section className="card bg-base-100 border border-base-300 p-6 rounded-2xl space-y-2">
+          <h2 className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+            1. Acceptance and Agreement
+          </h2>
+          <p>
+            Your access to and use of the Service is conditioned upon your
+            acceptance of and compliance with these Terms. If you disagree with
+            any part, you must not use the Service.
+          </p>
+        </section>
 
-      <h2 style={subHeadingStyle}>2. Account Registration and Use</h2>
-      
-      <h3 style={h3Style}>2.1. User Responsibilities</h3>
-      <p style={paragraphStyle}>
-        You must ensure all information provided (for jobs or resumes) is accurate, current, and truthful.
-      </p>
+        <section className="card bg-base-100 border border-base-300 p-6 rounded-2xl space-y-4">
+          <h2 className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+            2. Account Registration and Use
+          </h2>
+          <div>
+            <h3 className="font-bold text-base-content">
+              2.1. User Responsibilities
+            </h3>
+            <p>
+              You must ensure all information provided (for jobs or resumes) is
+              accurate, current, and truthful.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-bold text-base-content">
+              2.2. Prohibited Content
+            </h3>
+            <p>
+              You agree not to post fraudulent, misleading, offensive, or
+              harmful content. We reserve the right to remove any content that
+              violates these rules without prior notice.
+            </p>
+          </div>
+        </section>
 
-      <h3 style={h3Style}>2.2. Prohibited Content</h3>
-      <p style={paragraphStyle}>
-        You agree not to post fraudulent, misleading, offensive, or harmful content. We reserve the right to remove any content that violates these rules without prior notice.
-      </p>
-
-      <h2 style={subHeadingStyle}>3. Limitation of Liability</h2>
-      <p style={paragraphStyle}>
-        Talent Bridge is an intermediary platform and is not liable for the conduct of any users or the suitability of any job or candidate found through the service.
-      </p>
-      
-      <div style={{ borderTop: `1px solid ${COLORS.secondaryGreen}`, margin: '30px 0' }} />
-
-      <p style={paragraphStyle}>Thank you for using Talent Bridge. If you have any questions, please contact our support team.</p>
+        <section className="card bg-base-100 border border-base-300 p-6 rounded-2xl space-y-2">
+          <h2 className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+            3. Limitation of Liability
+          </h2>
+          <p>
+            Talent Bridge is an intermediary platform and is not liable for the
+            conduct of any users or the suitability of any job or candidate
+            found through the service.
+          </p>
+        </section>
+      </div>
     </div>
   );
 };

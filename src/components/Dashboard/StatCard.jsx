@@ -1,18 +1,14 @@
 const StatCard = ({ icon: Icon, title, value }) => {
   return (
-    // Card Background: White (bg-white) with shadow and light green border
-    <div className="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 border border-green-300 hover:border-green-500 transition duration-300">
-      {/* Icon Circle: Retain bold green background */}
-      <div className="p-3 bg-green-600 rounded-full text-white shadow-lg shadow-green-600/50">
+    <div className="bg-base-100 rounded-2xl shadow-sm hover:shadow-md p-6 flex items-center space-x-4 border border-base-300 hover:border-emerald-500/50 transition-all duration-300">
+      <div className="p-3.5 bg-emerald-600 rounded-2xl text-white shadow-lg shadow-emerald-600/30">
         {Icon && <Icon className="w-6 h-6" />}
       </div>
       <div>
-        {/* Title Text: Darker text on light background */}
-        <p className="text-sm font-medium text-green-700 uppercase tracking-wider">
+        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
           {title}
         </p>
-        {/* Value Text: Dark text */}
-        <p className="text-3xl font-bold text-gray-800">{value}</p>
+        <p className="text-3xl font-black text-base-content mt-0.5">{value}</p>
       </div>
     </div>
   );

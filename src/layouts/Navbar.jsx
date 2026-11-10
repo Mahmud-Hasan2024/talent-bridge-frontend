@@ -1,7 +1,16 @@
 import { useState } from "react";
-import { Menu, X, Briefcase, LogOut, LogIn, UserPlus } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import {
+  Menu,
+  X,
+  Briefcase,
+  LogOut,
+  LogIn,
+  UserPlus,
+  User,
+} from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router";
 import useAuthContext from "../hooks/useAuthContext";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -10,157 +19,175 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logoutUser();
+    setOpen(false);
     navigate("/login");
   };
 
-  const role = user?.role || "guest";
+  const role = user?.role?.toLowerCase() || "guest";
+  const isAuthenticated = Boolean(user && user.id);
 
-// Role-based navigation items
-const isAuthenticated = user && user.id; 
-
-const navLinks = [
-  { path: "/", label: "Home" },
-  { path: "/jobs", label: "Jobs" },
-  { path: "/job-categories", label: "Categories" },
-  
-  ...(isAuthenticated 
-      ? [{ path: "/Dashboard", label: "Dashboard" }] 
+  const navLinks = [
+    { path: "/", label: "Home" },
+    { path: "/jobs", label: "Jobs" },
+    { path: "/job-categories", label: "Categories" },
+    ...(isAuthenticated ? [{ path: "/dashboard", label: "Dashboard" }] : []),
+    ...(role === "seeker"
+      ? [
+          {
+            path: "/dashboard/seeker/applications-status",
+            label: "My Applications",
+          },
+        ]
       : []),
-      
-  ...(role === "seeker"
-    ? [{ path: "/Dashboard/seeker/my-applications", label: "My Applications" }]
-    : []),
-    
-  { path: "/about", label: "About" },
-  { path: "/contact", label: "Contact" },
-  { path: "/terms", label: "Terms of Service" },
-];
+    { path: "/about", label: "About" },
+    { path: "/contact", label: "Contact" },
+  ];
 
   return (
-    <nav className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+    <nav className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950 text-white shadow-lg sticky top-0 z-50 border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <Briefcase className="w-7 h-7 text-lime-400" />
-          <h1 className="text-2xl font-bold tracking-wide">Talent Bridge</h1>
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="p-2 rounded-xl bg-white/10 group-hover:bg-lime-400/20 transition">
+            <Briefcase className="w-6 h-6 text-lime-300" />
+          </div>
+          <span className="text-2xl font-extrabold tracking-tight">
+            Talent<span className="text-lime-300">Bridge</span>
+          </span>
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex space-x-6 font-medium">
+        <div className="hidden lg:flex items-center space-x-1 font-medium">
           {navLinks.map((link) => (
-            <Link
+            <NavLink
               key={link.path}
               to={link.path}
-              className="hover:text-lime-300 transition"
+              className={({ isActive }) =>
+                `px-3.5 py-2 rounded-xl text-sm transition-all ${
+                  isActive
+                    ? "bg-white/15 text-lime-300 font-bold"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
+                }`
+              }
             >
               {link.label}
-            </Link>
+            </NavLink>
           ))}
         </div>
 
         {/* Right Side (Desktop) */}
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-3">
+          <ThemeToggle className="text-white hover:bg-white/10" />
+
           {user ? (
             <>
-              <div className="flex items-center gap-2 bg-emerald-700 px-3 py-1 rounded-full">
-                <img
-                  alt="User Avatar"
-                  src="https://api.iconify.design/material-symbols/account-circle.svg?color=%239ca3af"
-                  className="w-10 h-10 rounded-full bg-gray-100"
-                />
-                <span className="font-medium capitalize">
+              <Link
+                to="/dashboard/profile"
+                className="flex items-center gap-2.5 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-full transition border border-white/15"
+              >
+                <div className="w-7 h-7 rounded-full bg-lime-400 text-slate-900 font-bold flex items-center justify-center text-xs uppercase">
+                  {user.first_name?.[0] || user.email?.[0] || "U"}
+                </div>
+                <span className="text-sm font-semibold capitalize max-w-[120px] truncate">
                   {user.first_name || user.email.split("@")[0]}
                 </span>
-              </div>
+              </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1 bg-lime-400 text-gray-900 font-semibold px-4 py-2 rounded-lg hover:bg-lime-500 transition"
+                className="btn btn-sm bg-lime-400 hover:bg-lime-300 text-slate-900 font-bold border-none rounded-xl px-4"
               >
-                <LogOut size={18} /> Logout
+                <LogOut size={16} /> Logout
               </button>
             </>
           ) : (
             <>
               <Link
                 to="/login"
-                className="flex items-center gap-1 bg-white text-emerald-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-100 transition"
+                className="btn btn-sm bg-white/15 hover:bg-white/25 text-white border-white/20 rounded-xl px-4 font-semibold"
               >
-                <LogIn size={18} /> Sign In
+                <LogIn size={16} /> Sign In
               </Link>
               <Link
                 to="/register"
-                className="flex items-center gap-1 bg-lime-400 text-gray-900 font-semibold px-4 py-2 rounded-lg hover:bg-lime-500 transition"
+                className="btn btn-sm bg-lime-400 hover:bg-lime-300 text-slate-900 border-none rounded-xl px-4 font-bold"
               >
-                <UserPlus size={18} /> Sign Up
+                <UserPlus size={16} /> Sign Up
               </Link>
             </>
           )}
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="lg:hidden"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle Menu"
-        >
-          {open ? <X size={26} /> : <Menu size={26} />}
-        </button>
+        {/* Mobile Menu Button */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle className="text-white hover:bg-white/10" />
+          <button
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle Menu"
+            className="btn btn-ghost btn-square text-white"
+          >
+            {open ? <X size={26} /> : <Menu size={26} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Dropdown */}
       {open && (
-        <div className="lg:hidden bg-emerald-700 text-white">
+        <div className="lg:hidden bg-emerald-800 dark:bg-slate-900 text-white border-t border-white/10 px-4 pt-2 pb-5 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className="block py-2 px-6 hover:bg-emerald-800"
+              className="block py-2.5 px-4 rounded-xl hover:bg-white/10 font-medium"
               onClick={() => setOpen(false)}
             >
               {link.label}
             </Link>
           ))}
 
-          <div className="border-t border-emerald-600 my-2"></div>
-
-          {user ? (
-            <>
-              <div className="flex items-center gap-2 px-6 py-2">
-                <img
-                  alt="User Avatar"
-                  src="https://api.iconify.design/material-symbols/account-circle.svg?color=%239ca3af"
-                  className="w-10 h-10 rounded-full bg-gray-100"
-                />
-                <span className="capitalize">
-                  {user.first_name || user.email.split("@")[0]}
-                </span>
+          <div className="border-t border-white/10 my-3 pt-3">
+            {user ? (
+              <div className="space-y-3 px-2">
+                <Link
+                  to="/dashboard/profile"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 py-2"
+                >
+                  <div className="w-9 h-9 rounded-full bg-lime-400 text-slate-900 font-bold flex items-center justify-center uppercase">
+                    {user.first_name?.[0] || user.email?.[0] || "U"}
+                  </div>
+                  <div>
+                    <p className="font-bold capitalize">
+                      {user.first_name || user.email.split("@")[0]}
+                    </p>
+                    <p className="text-xs text-white/70">{user.email}</p>
+                  </div>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="btn bg-lime-400 hover:bg-lime-300 text-slate-900 font-bold border-none w-full rounded-xl"
+                >
+                  <LogOut size={18} /> Logout
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="block w-full text-left py-2 px-6 bg-lime-500 text-gray-900 font-semibold hover:bg-lime-400"
-              >
-                <LogOut className="inline mr-2" size={18} />
-                Logout
-              </button>
-            </>
-          ) : (
-            <div className="flex flex-col gap-2 px-6 py-3">
-              <Link
-                to="/login"
-                className="bg-white text-emerald-700 font-semibold py-2 rounded-lg text-center hover:bg-gray-100"
-              >
-                <LogIn className="inline mr-2" size={18} />
-                Sign In
-              </Link>
-              <Link
-                to="/register"
-                className="bg-lime-400 text-gray-900 font-semibold py-2 rounded-lg text-center hover:bg-lime-500"
-              >
-                <UserPlus className="inline mr-2" size={18} />
-                Sign Up
-              </Link>
-            </div>
-          )}
+            ) : (
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="btn bg-white text-emerald-800 hover:bg-gray-100 border-none rounded-xl font-bold"
+                >
+                  <LogIn size={16} /> Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setOpen(false)}
+                  className="btn bg-lime-400 text-slate-900 hover:bg-lime-300 border-none rounded-xl font-bold"
+                >
+                  <UserPlus size={16} /> Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </nav>

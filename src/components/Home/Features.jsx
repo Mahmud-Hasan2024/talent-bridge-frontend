@@ -2,23 +2,20 @@ import useAuthContext from "../../hooks/useAuthContext";
 
 const Features = () => {
   const { user } = useAuthContext();
-
-  // Temporary mock role — same idea as Hero
-  // const [role, setRole] = useState("guest"); // guest | job_seeker | employer | admin
-
-  const role = user?.role || "guest";
+  const role = user?.role?.toLowerCase() || "guest";
 
   const featuresByRole = {
     guest: [
       {
         title: "Explore Opportunities",
         description:
-          "Browse job listings and learn about companies hiring near you.",
+          "Browse verified job listings and learn about companies hiring near you.",
         icon: "🌐",
       },
       {
         title: "Post Jobs Easily",
-        description: "Employers can share open roles in just a few clicks.",
+        description:
+          "Employers can share open roles and feature listings in just a few clicks.",
         icon: "💼",
       },
       {
@@ -30,102 +27,91 @@ const Features = () => {
     seeker: [
       {
         title: "Smart Job Recommendations",
-        description: "Get AI-powered job suggestions based on your skills.",
+        description:
+          "Get personalized job suggestions tailored to your profile.",
         icon: "🎯",
       },
       {
         title: "One-Click Applications",
-        description: "Apply to multiple jobs quickly with your saved profile.",
+        description:
+          "Apply to multiple jobs quickly with your resume and portfolio.",
         icon: "⚡",
       },
       {
         title: "Track Application Status",
-        description: "Monitor all your job applications easily.",
+        description:
+          "Monitor all your job applications from pending to offered.",
         icon: "📊",
       },
     ],
     employer: [
       {
         title: "Post & Manage Jobs",
-        description: "Easily publish job openings and manage applicants.",
+        description:
+          "Easily publish job openings and manage applicants in one place.",
         icon: "🧾",
       },
       {
-        title: "Find Top Talent",
-        description: "Use smart filters to discover qualified candidates fast.",
-        icon: "🔍",
+        title: "Feature Your Listings",
+        description:
+          "Boost visibility with SSLCommerz instant featured job promotion.",
+        icon: "🌟",
       },
       {
         title: "Company Branding",
-        description: "Showcase your culture and attract the right hires.",
+        description:
+          "Showcase your culture and collect verified employee reviews.",
         icon: "🏢",
       },
     ],
     admin: [
       {
         title: "Manage Users & Roles",
-        description: "Control access and manage the platform efficiently.",
+        description: "Control access and oversee all accounts efficiently.",
         icon: "⚙️",
       },
       {
         title: "Monitor Analytics",
-        description: "Track performance, activity, and growth.",
+        description: "Track platform performance, activity, and growth.",
         icon: "📈",
       },
       {
         title: "Platform Security",
-        description: "Maintain security and compliance.",
+        description: "Maintain security, categories, and compliance.",
         icon: "🛡️",
       },
     ],
   };
 
-  const features = featuresByRole[role];
+  const features = featuresByRole[role] || featuresByRole.guest;
 
   return (
-    <section className="bg-slate-50 py-16">
-      <div className="container mx-auto px-6 text-center">
-        <h2 className="text-3xl font-extrabold text-emerald-700 mb-8">
+    <section className="bg-base-200 py-16">
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-10">
           {role === "employer"
             ? "Powerful Tools for Employers"
             : role === "seeker"
-            ? "Everything You Need to Get Hired"
-            : role === "admin"
-            ? "Admin Tools for Total Control"
-            : "Why Choose TalentBridge?"}
+              ? "Everything You Need to Get Hired"
+              : role === "admin"
+                ? "Admin Tools for Total Control"
+                : "Why Choose Talent Bridge?"}
         </h2>
 
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, i) => (
             <div
               key={i}
-              className="bg-white shadow-lg rounded-2xl p-8 hover:shadow-xl transition"
+              className="bg-base-100 border border-base-300 shadow-sm hover:shadow-xl rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1"
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-3 text-emerald-700">
+              <h3 className="text-xl font-bold mb-3 text-emerald-600 dark:text-emerald-400">
                 {feature.title}
               </h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-base-content/70">{feature.description}</p>
             </div>
           ))}
         </div>
-
-        {/* Role Switcher for Testing */}
-        {/* <div className="mt-10">
-          <label className="block text-sm text-emerald-600 mb-2 font-medium">
-            Simulate Role:
-          </label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="text-gray-800 px-4 py-2 rounded border"
-          >
-            <option value="guest">Guest</option>
-            <option value="job_seeker">Job Seeker</option>
-            <option value="employer">Employer</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div> */}
       </div>
     </section>
   );

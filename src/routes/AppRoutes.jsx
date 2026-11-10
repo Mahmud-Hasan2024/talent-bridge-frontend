@@ -4,16 +4,6 @@ import { Route, Routes } from "react-router";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import TermsOfService from "../pages/TermsOfService";
-
-// Layouts
-import MainLayout from "../layouts/MainLayout";
-import DashboardLayout from "../layouts/DashboardLayout";
-
-// Auth & Role
-import PrivateRoute from "../components/PrivateRoute";
-import RoleGuard from "../components/RoleGuard";
-
-// Public Pages
 import Home from "../pages/Home";
 import Job from "../pages/Job";
 import CategoryPage from "../JobBoard/CategoryPage";
@@ -22,6 +12,14 @@ import Register from "../pages/Register";
 import ActivateAccount from "../components/Registration/ActivateAccount";
 import Unauthorized from "../pages/Unauthorized";
 import JobDetails from "../pages/JobDetails";
+
+// Layouts
+import MainLayout from "../layouts/MainLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
+
+// Auth & Role
+import PrivateRoute from "../components/PrivateRoute";
+import RoleGuard from "../components/RoleGuard";
 
 // Dashboard Pages
 import Dashboard from "../pages/Dashboard/Dashboard";
@@ -71,43 +69,34 @@ function AppRoutes() {
           </PrivateRoute>
         }
       >
-        {/* Common routes */}
         <Route index element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
 
-        {/* Seeker-only */}
+        {/* Seeker Routes */}
         <Route
-            path="jobs"
-            element={
-              <RoleGuard allowedRoles={["seeker"]}>
-                <Job />
-              </RoleGuard>
-            }
-          />
-        <Route
-          path="admin/all-jobs"
+          path="jobs"
           element={
-            <RoleGuard allowedRoles={["admin"]}>
-              <AllJobs />
+            <RoleGuard allowedRoles={["seeker"]}>
+              <Job />
             </RoleGuard>
           }
         />
-          <Route
-            path="job-categories"
-            element={
-              <RoleGuard allowedRoles={["seeker"]}>
-                <CategoryPage />
-              </RoleGuard>
-            }
-          />
-        {/* <Route
+        <Route
+          path="job-categories"
+          element={
+            <RoleGuard allowedRoles={["seeker"]}>
+              <CategoryPage />
+            </RoleGuard>
+          }
+        />
+        <Route
           path="seeker/my-applications"
           element={
             <RoleGuard allowedRoles={["seeker"]}>
               <MyApplications />
             </RoleGuard>
           }
-        /> */}
+        />
         <Route
           path="seeker/applications-status"
           element={
@@ -117,7 +106,7 @@ function AppRoutes() {
           }
         />
 
-        {/* Employer-only */}
+        {/* Employer Routes */}
         <Route
           path="employer/jobs"
           element={
@@ -167,7 +156,15 @@ function AppRoutes() {
           }
         />
 
-        {/* Admin-only */}
+        {/* Admin Routes */}
+        <Route
+          path="admin/all-jobs"
+          element={
+            <RoleGuard allowedRoles={["admin"]}>
+              <AllJobs />
+            </RoleGuard>
+          }
+        />
         <Route
           path="admin/jobs/:jobId/edit"
           element={

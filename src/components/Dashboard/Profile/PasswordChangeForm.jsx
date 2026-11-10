@@ -20,7 +20,10 @@ const PasswordChangeForm = ({
       case "new_password":
         return {
           required: "New password is required",
-          minLength: { value: 8, message: "Password must be at least 8 characters" },
+          minLength: {
+            value: 8,
+            message: "Password must be at least 8 characters",
+          },
         };
       case "confirm_new_password":
         return {
@@ -34,14 +37,14 @@ const PasswordChangeForm = ({
   };
 
   return (
-    <div className="mt-6 border-t border-green-300 pt-6">
+    <div className="mt-6 border-t border-base-300 pt-6">
       <button
         type="button"
-        className="btn btn-ghost p-0 justify-start text-green-700 font-semibold h-auto min-h-0 text-lg flex items-center gap-2 hover:bg-transparent"
+        className="btn btn-ghost p-0 justify-start text-emerald-600 dark:text-emerald-400 font-semibold h-auto min-h-0 text-lg flex items-center gap-2 hover:bg-transparent"
         onClick={() => setIsPasswordSectionOpen(!isPasswordSectionOpen)}
         disabled={!isEditing}
       >
-        <Lock size={20} className="text-green-700" />
+        <Lock size={20} />
         Change Password
         <ChevronDown
           size={18}
@@ -52,71 +55,87 @@ const PasswordChangeForm = ({
       </button>
 
       {isPasswordSectionOpen && isEditing && (
-        <div className="mt-4 space-y-4 pl-4 border-l-2 border-green-500 bg-green-50 p-4 rounded-lg shadow-inner">
-          {/* Current Password */}
+        <div className="mt-4 space-y-4 pl-4 border-l-2 border-emerald-500 bg-base-200/60 p-4 rounded-xl">
           <div className="form-control">
-            <label className="label text-green-700">Current Password</label>
+            <label className="label">
+              <span className="label-text font-medium">Current Password</span>
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="input input-bordered bg-green-100 w-full pr-10 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
-                {...register("current_password", passwordRules("current_password"))}
+                className="input input-bordered bg-base-100 w-full pr-10"
+                {...register(
+                  "current_password",
+                  passwordRules("current_password"),
+                )}
               />
               <span
-                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-green-700"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-base-content/60"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
             {errors.current_password && (
-              <p className="text-red-500 text-sm mt-1">{errors.current_password.message}</p>
+              <p className="text-error text-sm mt-1">
+                {errors.current_password.message}
+              </p>
             )}
           </div>
 
-          {/* New Password */}
           <div className="form-control">
-            <label className="label text-green-700">New Password</label>
+            <label className="label">
+              <span className="label-text font-medium">New Password</span>
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="input input-bordered bg-green-100 w-full pr-10 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
+                className="input input-bordered bg-base-100 w-full pr-10"
                 {...register("new_password", passwordRules("new_password"))}
               />
               <span
-                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-green-700"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-base-content/60"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
             {errors.new_password && (
-              <p className="text-red-500 text-sm mt-1">{errors.new_password.message}</p>
+              <p className="text-error text-sm mt-1">
+                {errors.new_password.message}
+              </p>
             )}
           </div>
 
-          {/* Confirm New Password */}
           <div className="form-control">
-            <label className="label text-green-700">Confirm New Password</label>
+            <label className="label">
+              <span className="label-text font-medium">
+                Confirm New Password
+              </span>
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="input input-bordered bg-green-100 w-full pr-10 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
-                {...register("confirm_new_password", passwordRules("confirm_new_password"))}
+                className="input input-bordered bg-base-100 w-full pr-10"
+                {...register(
+                  "confirm_new_password",
+                  passwordRules("confirm_new_password"),
+                )}
               />
               <span
-                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-green-700"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-base-content/60"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
             {errors.confirm_new_password && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirm_new_password.message}</p>
+              <p className="text-error text-sm mt-1">
+                {errors.confirm_new_password.message}
+              </p>
             )}
           </div>
 
-          {/* Show Password Toggle */}
           <div className="form-control mt-4">
             <label className="label cursor-pointer justify-start gap-3">
               <input
@@ -125,7 +144,7 @@ const PasswordChangeForm = ({
                 checked={showPassword}
                 onChange={() => setShowPassword(!showPassword)}
               />
-              <span className="label-text text-green-700">Show Passwords</span>
+              <span className="label-text">Show Passwords</span>
             </label>
           </div>
         </div>

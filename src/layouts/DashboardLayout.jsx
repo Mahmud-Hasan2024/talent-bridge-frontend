@@ -5,11 +5,10 @@ import { Outlet } from "react-router";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer lg:drawer-open bg-base-200 min-h-screen">
       <input
         id="drawer-toggle"
         type="checkbox"
@@ -17,9 +16,9 @@ const DashboardLayout = () => {
         checked={sidebarOpen}
         onChange={toggleSidebar}
       />
-      <div className="drawer-content flex flex-col">
+      <div className="drawer-content flex flex-col min-h-screen">
         <Navbar sidebarOpen={sidebarOpen} />
-        <main className="p-6 bg-base-100 min-h-screen">
+        <main className="p-4 md:p-8 bg-base-200 flex-1">
           <Outlet />
         </main>
       </div>
